@@ -1,0 +1,248 @@
+{
+  "projects": [
+    {
+      "id": "p1",
+      "title": "Affiche",
+      "category": "photo",
+      "description": "Affiche promotionnelle réalisée autour d'un événement culturel. Travail sur la composition typographique et la hiérarchisation des informations, avec une série de déclinaisons adaptées à différents formats.",
+      "images": [
+        "images_test/image_test1.jpeg",
+        "images_test/image_test2.jpg"
+      ]
+    },
+    {
+      "id": "p2",
+      "title": "Identité visuelle",
+      "category": "graphic",
+      "description": "Construction d'une identité de marque complète : logo, palette chromatique, typographies et guidelines. Le projet met l'accent sur la cohérence entre supports imprimés et digitaux.",
+      "images": [
+        "images_test/image_test3.jpg.webp",
+        "images_test/image_test4.jpeg"
+      ]
+    },
+    {
+      "id": "p3",
+      "title": "Motion design",
+      "category": "video",
+      "description": "Animation courte destinée aux réseaux sociaux. Storyboard, illustration puis animation sous After Effects pour mettre en valeur les points forts du produit.",
+      "images": [
+        "images_test/image_test5.jpeg",
+        "images_test/image_test6.jpeg"
+      ]
+    },
+    {
+      "id": "p4",
+      "title": "Site web",
+      "category": "graphic",
+      "description": "Conception et développement d'un site vitrine responsive avec mise en avant des services et génération de leads. UX simplifiée et intégration front-end légère pour de bonnes performances.",
+      "images": [
+        "images_test/image_test7.jpeg",
+        "images_test/image_test8.jpg.avif"
+      ]
+    },
+    {
+      "id": "p5",
+      "title": "Affiche 2",
+      "category": "photo",
+      "description": "Variation d'affiche sur la même identité visuelle, travail sur la série et le rythme typographique.",
+      "images": [
+        "images_test/image_test9.JPG",
+        "images_test/image_test10.jpeg"
+      ]
+    },
+    {
+      "id": "p6",
+      "title": "Série d'affiches",
+      "category": "photo",
+      "description": "Série d'affiches thématiques déclinées pour une campagne d'exposition.",
+      "images": [
+        "images_test/image_test11.jpg.png",
+        "images_test/image_test12.jpeg"
+      ]
+    },
+    {
+      "id": "p7",
+      "title": "Packaging",
+      "category": "video",
+      "description": "Packaging pour un produit culturel, travail sur le volume et la lisibilité en rayon.",
+      "images": [
+        "images_test/image_test13.jpg",
+        "images_test/image_test14.jpg"
+      ]
+    },
+    {
+      "id": "p8",
+      "title": "Édition",
+      "category": "graphic",
+      "description": "Mise en page éditoriale : couverture, sommaire et doubles pages pour une revue.",
+      "images": [
+        "images_test/image_test15.jpg",
+        "images_test/image_test16.jpg"
+      ]
+    },
+    {
+      "id": "p9",
+      "title": "Affiche événementielle",
+      "category": "photo",
+      "description": "Affiche pour un concert, travail sur la hiérarchie des informations et l'impact visuel.",
+      "images": [
+        "images_test/image_test17.jpg",
+        "images_test/image_test18.jpg"
+      ]
+    },
+    {
+      "id": "p10",
+      "title": "Identité de festival",
+      "category": "photo",
+      "description": "Identité visuelle complète pour un festival : logo, affiches et supports digitaux.",
+      "images": [
+        "images_test/image_test19.jpg",
+        "images_test/image_test20.jpg"
+      ]
+    },
+    {
+      "id": "p11",
+      "title": "Affiche typographique",
+      "category": "photo",
+      "description": "Exploration typographique pure, composition et contraste de formes.",
+      "images": [
+        "images_test/image_test21.jpg",
+        "images_test/image_test22.jpeg"
+      ]
+    },
+    {
+      "id": "p12",
+      "title": "Affiche minimaliste",
+      "category": "video",
+      "description": "Affiche construite autour d'une mise en page très épurée et d'une palette réduite.",
+      "images": [
+        "images_test/image_test23.jpeg",
+        "images_test/image_test24.jpg"
+      ]
+    },
+    {
+      "id": "p13",
+      "title": "Affiche expérimentale",
+      "category": "video",
+      "description": "Affiche expérimentale mêlant textures, photos et typographies déformées.",
+      "images": [
+        "images_test/image_test25.jpg",
+        "images_test/image_test26.jpeg"
+      ]
+    },
+    {
+      "id": "p14",
+      "title": "Série Instagram",
+      "category": "graphic",
+      "description": "Série de visuels adaptés aux formats réseaux sociaux pour une communication cohérente.",
+      "images": [
+        "images_test/image_test27.jpg",
+        "images_test/image_test28.jpg"
+      ]
+    },
+    {
+      "id": "p15",
+      "title": "Portrait série",
+      "category": "photo",
+      "description": "Série de portraits en noir et blanc explorant les expressions et les émotions.",
+      "images": [
+        "images_test/image_test29.jpg",
+        "images_test/image_test30.jpg"
+      ]
+    },
+    {
+      "id": "p16",
+      "title": "Court métrage",
+      "category": "video",
+      "description": "Court métrage documentaire sur le quotidien urbain, montage et post-production.",
+      "images": [
+        "images_test/image_test31.jpeg",
+        "images_test/image_test32.jpg"
+      ]
+    },
+    {
+      "id": "p17",
+      "title": "Catalogue produit",
+      "category": "graphic",
+      "description": "Catalogue produit avec mise en page soignée et photographies de produits.",
+      "images": [
+        "images_test/image_test33.jpg",
+        "images_test/image_test34.jpg"
+      ]
+    },
+    {
+      "id": "p18",
+      "title": "Paysage urbain",
+      "category": "photo",
+      "description": "Série photographique sur l'architecture moderne et les espaces urbains.",
+      "images": [
+        "images_test/image_test35.jpg",
+        "images_test/image_test36.jpeg"
+      ]
+    },
+    {
+      "id": "p19",
+      "title": "Clip musical",
+      "category": "video",
+      "description": "Clip vidéo pour un artiste indépendant, direction artistique et réalisation.",
+      "images": [
+        "images_test/image_test37.jpeg",
+        "images_test/image_test38.jpeg"
+      ]
+    },
+    {
+      "id": "p20",
+      "title": "Signalétique",
+      "category": "graphic",
+      "description": "Conception de signalétique pour un espace d'exposition, orientation et navigation.",
+      "images": [
+        "images_test/image_test39.jpeg",
+        "images_test/image_test40.jpeg"
+      ]
+    },
+    {
+      "id": "p21",
+      "title": "Nature morte",
+      "category": "photo",
+      "description": "Série de natures mortes avec éclairage contrôlé et composition minimaliste.",
+      "images": [
+        "images_test/image_test41.jpeg",
+        "images_test/image_test42.jpeg"
+      ]
+    },
+    {
+      "id": "p22",
+      "title": "Publicité",
+      "category": "video",
+      "description": "Spot publicitaire pour une marque, storyboard et post-production.",
+      "images": [
+        "images_test/image_test43.jpeg",
+        "images_test/image_test44.jpg.webp",
+        "images_test/image_test45.jpg.webp"
+      ]
+    },
+    {
+      "id": "p23",
+      "title": "Carte de visite",
+      "category": "graphic",
+      "description": "Design de cartes de visite avec finitions premium et impression sérigraphie.",
+      "images": [
+        "images_test/image_test46.jpg.webp",
+        "images_test/image_test47.jpeg",
+        "images_test/image_test48.jpg"
+      ]
+    },
+    {
+      "id": "p24",
+      "title": "Reportage événement",
+      "category": "photo",
+      "description": "Couverture photographique d'un événement culturel, captation des moments clés.",
+      "images": [
+        "images_test/image_test49.jpg",
+        "images_test/image_test50.jpg",
+        "images_test/image_test51.jpeg"
+      ]
+    }
+  ]
+}
+
