@@ -158,6 +158,28 @@
         aside {
           padding-top: 0.5rem !important;
         }
+        /* Bouton retour sticky en mode détail mobile */
+        body.detail-mode #back-to-list {
+          position: sticky;
+          top: 0;
+          padding: 0.5rem 0;
+          z-index: 10;
+          margin-bottom: 0.5rem;
+          transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+        }
+        body.detail-mode #back-to-list.hidden-scroll {
+          opacity: 0;
+          transform: translateY(-10px);
+          pointer-events: none;
+        }
+        /* Réduire l'espacement dans project-detail en mode mobile */
+        body.detail-mode #project-detail {
+          gap: 0.5rem;
+        }
+        /* Masquer le header en mode détail mobile */
+        body.detail-mode .header-container {
+          display: none !important;
+        }
         /* Masquer le carrousel d'images sur mobile */
         #image-carousel {
           display: none !important;

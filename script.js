@@ -255,6 +255,10 @@ function enterDetailMode(project) {
   }
   
   isDetailMode = true;
+  
+  // Ajouter la classe detail-mode au body pour masquer le header en mobile
+  document.body.classList.add('detail-mode');
+  
   projectList.classList.add('hidden');
   projectsHeading.classList.add('hidden');
   if (filterButtons) filterButtons.classList.add('hidden');
@@ -262,11 +266,21 @@ function enterDetailMode(project) {
     fadeOut(imageCarousel);
   }
   
+  // Configurer le scroll pour le bouton retour en mode mobile
+  setupBackButtonScroll();
+  
   fadeIn(projectDetail);
 }
 
 function exitDetailMode() {
   isDetailMode = false;
+  
+  // Retirer la classe detail-mode du body pour réafficher le header
+  document.body.classList.remove('detail-mode');
+  
+  // Nettoyer le listener de scroll
+  cleanupBackButtonScroll();
+  
   fadeOut(projectDetail);
   fadeIn(projectsHeading);
   fadeIn(projectList);
@@ -285,6 +299,66 @@ function exitDetailMode() {
   }
   
   showBlank();
+}
+
+// ============================================================================
+// GESTION DU SCROLL POUR LE BOUTON RETOUR
+// ============================================================================
+
+let lastScrollTop = 0;
+let scrollTimeout = null;
+
+function setupBackButtonScroll() {
+  if (!backToListButton) return;
+  
+  // Réinitialiser l'état
+  lastScrollTop = 0;
+  backToListButton.classList.remove('hidden-scroll');
+  
+  // Écouter le scroll sur l'aside (colonne de gauche)
+  const aside = document.querySelector('aside');
+  if (!aside) return;
+  
+  aside.addEventListener('scroll', handleBackButtonScroll);
+}
+
+function cleanupBackButtonScroll() {
+  if (!backToListButton) return;
+  
+  const aside = document.querySelector('aside');
+  if (!aside) return;
+  
+  aside.removeEventListener('scroll', handleBackButtonScroll);
+  backToListButton.classList.remove('hidden-scroll');
+}
+
+function handleBackButtonScroll() {
+  if (!backToListButton || !isDetailMode) return;
+  
+  const aside = document.querySelector('aside');
+  if (!aside) return;
+  
+  const currentScrollTop = aside.scrollTop;
+  
+  // Annuler le timeout précédent
+  if (scrollTimeout) {
+    clearTimeout(scrollTimeout);
+  }
+  
+  // Si on scroll vers le bas (plus de 50px)
+  if (currentScrollTop > lastScrollTop && currentScrollTop > 50) {
+    backToListButton.classList.add('hidden-scroll');
+  } 
+  // Si on scroll vers le haut
+  else if (currentScrollTop < lastScrollTop) {
+    backToListButton.classList.remove('hidden-scroll');
+  }
+  // Si on est tout en haut
+  else if (currentScrollTop <= 50) {
+    backToListButton.classList.remove('hidden-scroll');
+  }
+  
+  lastScrollTop = currentScrollTop;
 }
 
 // ============================================================================
