@@ -298,6 +298,12 @@ function exitDetailMode() {
     }
   }
   
+  // Remettre en haut de la liste de projets
+  const aside = document.querySelector('aside');
+  if (aside) {
+    aside.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  
   showBlank();
 }
 
