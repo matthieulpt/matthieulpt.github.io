@@ -228,10 +228,31 @@ function enterDetailMode(project) {
   
   const title = project.dataset.title || project.textContent.trim();
   const description = project.dataset.description || '';
+  const projectId = project.dataset.target;
+  
+  // Trouver le projet dans projectsData
+  const projectData = projectsData.find(p => p.id === projectId);
   
   detailTitle.textContent = title;
   detailDescription.textContent = description;
   detailDescription.classList.toggle('hidden', !description.trim());
+  
+  // Ajouter les images pour mobile (en dessous de la description)
+  const detailImagesContainer = document.getElementById('detail-images-mobile');
+  if (detailImagesContainer && projectData && projectData.images) {
+    // Vider le conteneur d'images
+    while (detailImagesContainer.firstChild) {
+      detailImagesContainer.removeChild(detailImagesContainer.firstChild);
+    }
+    projectData.images.forEach((imagePath, index) => {
+      const img = document.createElement('img');
+      img.src = imagePath;
+      img.alt = `${title} - Image ${index + 1}`;
+      img.className = 'w-full h-auto object-contain';
+      img.loading = 'lazy';
+      detailImagesContainer.appendChild(img);
+    });
+  }
   
   isDetailMode = true;
   projectList.classList.add('hidden');
@@ -253,6 +274,16 @@ function exitDetailMode() {
   
   detailTitle.textContent = '';
   detailDescription.textContent = '';
+  
+  // Nettoyer les images mobiles
+  const detailImagesContainer = document.getElementById('detail-images-mobile');
+  if (detailImagesContainer) {
+    // Vider le conteneur d'images
+    while (detailImagesContainer.firstChild) {
+      detailImagesContainer.removeChild(detailImagesContainer.firstChild);
+    }
+  }
+  
   showBlank();
 }
 
