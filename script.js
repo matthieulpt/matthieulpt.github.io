@@ -1,5 +1,17 @@
+// ============================================================================
+// VARIABLES GLOBALES
+// ============================================================================
+
 let projects = [];
 let previews = [];
+let projectsData = [];
+let imageCarousel = null;
+
+let activePreview = null;
+let currentProjectIndex = -1; // -1 = état vide
+let isDetailMode = false;
+let activeFilter = null; // null = tous les projets, 'photo', 'video', 'graphic'
+
 const projectList = document.getElementById('project-list');
 const projectDetail = document.getElementById('project-detail');
 const filterButtons = document.getElementById('filter-buttons');
@@ -8,14 +20,12 @@ const detailTitle = document.getElementById('detail-title');
 const detailDescription = document.getElementById('detail-description');
 const projectsHeading = document.getElementById('projects-heading');
 const mainContent = document.querySelector('main');
+
 const FADE_DURATION = 200;
-let activePreview = null;
-let currentProjectIndex = -1; // -1 = état vide
-let isDetailMode = false;
-let activeFilter = null; // null = tous les projets, 'photo', 'video', 'graphic'
-let projectsData = []; // Données des projets depuis le JSON
-let imageCarousel = null; // Conteneur du carrousel d'images
-let imageToProjectMap = new Map(); // Mapping image -> projet
+
+// ============================================================================
+// FONCTIONS UTILITAIRES
+// ============================================================================
 
 function fadeIn(element) {
   if (!element) return;
@@ -36,7 +46,6 @@ function fadeOut(element) {
   }, FADE_DURATION);
 }
 
-// Fonction pour obtenir les projets visibles (non filtrés)
 function getVisibleProjects() {
   return Array.from(projects).filter(project => {
     if (activeFilter === null) return true;
@@ -44,39 +53,71 @@ function getVisibleProjects() {
   });
 }
 
-// Fonction pour obtenir l'index réel d'un projet dans la liste complète
-function getRealIndex(visibleIndex) {
-  const visibleProjects = getVisibleProjects();
-  if (visibleIndex < 0 || visibleIndex >= visibleProjects.length) return -1;
-  const project = visibleProjects[visibleIndex];
-  return Array.from(projects).indexOf(project);
+function shuffleArray(array) {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
 }
 
-// Fonction pour obtenir l'index visible d'un projet réel
-function getVisibleIndex(realIndex) {
-  const visibleProjects = getVisibleProjects();
-  const project = projects[realIndex];
-  return visibleProjects.indexOf(project);
-}
+// ============================================================================
+// GESTION DES PROJETS
+// ============================================================================
 
-// Fonction pour filtrer les projets
 function filterProjects(category) {
   activeFilter = category;
+  
+  // Changer la couleur de fond selon la catégorie
+  const body = document.body;
+  const aside = document.querySelector('aside');
+  const main = document.querySelector('main');
+  const categoryColors = {
+    'photo': 'bg-red-50',
+    'video': 'bg-green-50',
+    'graphic': 'bg-blue-50'
+  };
+  const gradientClasses = {
+    'photo': 'gradient-photo',
+    'video': 'gradient-video',
+    'graphic': 'gradient-graphic'
+  };
+  
+  // Retirer toutes les classes de couleur de fond
+  [body, aside, main].forEach(el => {
+    if (el) {
+      el.classList.remove('bg-red-50', 'bg-green-50', 'bg-blue-50');
+    }
+  });
+  
+  // Retirer toutes les classes de dégradé
+  body.classList.remove('gradient-photo', 'gradient-video', 'gradient-graphic');
+  
+  if (category && categoryColors[category]) {
+    [body, aside, main].forEach(el => {
+      if (el) {
+        el.classList.add(categoryColors[category]);
+      }
+    });
+    
+    // Ajouter la classe de dégradé correspondante
+    if (gradientClasses[category]) {
+      body.classList.add(gradientClasses[category]);
+    }
+  }
   
   // Mettre à jour l'état actif des boutons
   document.querySelectorAll('.filter-btn').forEach(btn => {
     if (category === null) {
-      // Si aucun filtre, tous les boutons à 100% d'opacité
       btn.classList.add('opacity-100');
-      btn.classList.remove('opacity-50');
+      btn.classList.remove('opacity-30', 'opacity-50');
     } else if (btn.dataset.filter === category) {
-      // Bouton actif à 100%
       btn.classList.add('opacity-100');
-      btn.classList.remove('opacity-50');
+      btn.classList.remove('opacity-30', 'opacity-50');
     } else {
-      // Boutons inactifs à 50%
-      btn.classList.add('opacity-50');
-      btn.classList.remove('opacity-100');
+      btn.classList.add('opacity-30');
+      btn.classList.remove('opacity-100', 'opacity-50');
     }
   });
   
@@ -96,28 +137,22 @@ function filterProjects(category) {
   showBlank();
 }
 
-// Fonction pour afficher l'état vide
 function showBlank() {
   currentProjectIndex = -1;
-
-  // Retirer la classe active de tous les projets
   projects.forEach(p => p.classList.remove('project-active'));
-
-  // Cacher tous les previews
+  
   previews.forEach(preview => {
     preview.classList.add('opacity-0', 'pointer-events-none');
     preview.classList.remove('opacity-100');
   });
   
-  // Afficher le carrousel d'images
   if (imageCarousel) {
     imageCarousel.classList.remove('hidden');
   }
-
+  
   activePreview = null;
 }
 
-// Fonction pour afficher un projet (index dans les projets visibles)
 function showProject(visibleIndex) {
   const visibleProjects = getVisibleProjects();
   
@@ -127,27 +162,19 @@ function showProject(visibleIndex) {
   }
   
   const project = visibleProjects[visibleIndex];
-  const realIndex = Array.from(projects).indexOf(project);
   const targetId = project.dataset.target;
   const targetPreview = document.getElementById(targetId);
-
-  if (!targetPreview) return;
-
-  // Mettre à jour l'index actif (index visible)
-  currentProjectIndex = visibleIndex;
-
-  // Retirer la classe active de tous les projets
-  projects.forEach(p => p.classList.remove('project-active'));
   
-  // Ajouter la classe active au projet courant
+  if (!targetPreview) return;
+  
+  currentProjectIndex = visibleIndex;
+  projects.forEach(p => p.classList.remove('project-active'));
   project.classList.add('project-active');
-
-  // Cacher le carrousel d'images
+  
   if (imageCarousel) {
     imageCarousel.classList.add('hidden');
   }
   
-  // Afficher le preview correspondant
   previews.forEach(preview => {
     if (preview === targetPreview) {
       preview.classList.remove('opacity-0', 'pointer-events-none');
@@ -160,32 +187,21 @@ function showProject(visibleIndex) {
   });
 }
 
-// Mode détail
 function enterDetailMode(project) {
   if (!project) return;
-
+  
   const title = project.dataset.title || project.textContent.trim();
   const description = project.dataset.description || '';
-
+  
   detailTitle.textContent = title;
   detailDescription.textContent = description;
-  if (description.trim()) {
-    detailDescription.classList.remove('hidden');
-  } else {
-    detailDescription.classList.add('hidden');
-  }
-
+  detailDescription.classList.toggle('hidden', !description.trim());
+  
   isDetailMode = true;
   projectList.classList.add('hidden');
   projectsHeading.classList.add('hidden');
-  if (filterButtons) {
-    filterButtons.classList.add('hidden');
-  }
-  
-  // Cacher le carrousel d'images
-  if (imageCarousel) {
-    imageCarousel.classList.add('hidden');
-  }
+  if (filterButtons) filterButtons.classList.add('hidden');
+  if (imageCarousel) imageCarousel.classList.add('hidden');
   
   fadeIn(projectDetail);
 }
@@ -195,156 +211,21 @@ function exitDetailMode() {
   fadeOut(projectDetail);
   fadeIn(projectsHeading);
   fadeIn(projectList);
-  if (filterButtons) {
-    filterButtons.classList.remove('hidden');
-  }
-
+  if (filterButtons) filterButtons.classList.remove('hidden');
+  
   detailTitle.textContent = '';
   detailDescription.textContent = '';
-
   showBlank();
 }
 
-// Navigation au clavier
-document.addEventListener('keydown', (e) => {
-  if (isDetailMode) {
-    return;
-  }
+// ============================================================================
+// GÉNÉRATION DU CONTENU
+// ============================================================================
 
-  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-    e.preventDefault();
-    
-    const visibleProjects = getVisibleProjects();
-    
-    if (currentProjectIndex === -1) {
-      // Si on est dans l'état vide
-      if (e.key === 'ArrowDown') {
-        // Aller au premier projet visible
-        if (visibleProjects.length > 0) {
-          showProject(0);
-        }
-      } else {
-        // Aller au dernier projet visible
-        if (visibleProjects.length > 0) {
-          showProject(visibleProjects.length - 1);
-        }
-      }
-    } else {
-      // Naviguer entre les projets visibles
-      if (e.key === 'ArrowDown') {
-        if (currentProjectIndex === visibleProjects.length - 1) {
-          // Si on est au dernier, aller à l'état vide
-          showBlank();
-        } else {
-          // Sinon, aller au projet suivant
-          showProject(currentProjectIndex + 1);
-        }
-      } else {
-        // Flèche haut
-        if (currentProjectIndex === 0) {
-          // Si on est au premier, aller à l'état vide
-          showBlank();
-        } else {
-          // Sinon, aller au projet précédent
-          showProject(currentProjectIndex - 1);
-        }
-      }
-    }
-  }
-});
-
-// Les événements sont maintenant attachés dans attachProjectEvents()
-
-if (backToListButton) {
-  backToListButton.addEventListener('click', () => {
-    exitDetailMode();
-  });
-}
-
-// Gestion des filtres
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const filter = btn.dataset.filter;
-    if (activeFilter === filter) {
-      // Si on clique sur le filtre actif, désactiver le filtre
-      filterProjects(null);
-    } else {
-      // Sinon, activer le nouveau filtre
-      filterProjects(filter);
-    }
-  });
-});
-
-// Fonction pour charger les projets depuis le JSON
-async function loadProjects() {
-  try {
-    const response = await fetch('projects.json');
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    
-    if (!data.projects || !Array.isArray(data.projects)) {
-      throw new Error('Format JSON invalide: projects array manquant');
-    }
-    
-    projectsData = data.projects;
-    console.log(`${projectsData.length} projets chargés`);
-    
-    // Générer les projets dans la liste
-    generateProjectList();
-    
-    // Générer les previews (pour le mode détail)
-    generatePreviews();
-    
-    // Générer le carrousel d'images
-    generateImageCarousel();
-    
-    // Réinitialiser les références
-    projects = Array.from(document.querySelectorAll('.project'));
-    previews = Array.from(document.querySelectorAll('.preview-content'));
-    
-    console.log(`${projects.length} projets générés, ${previews.length} previews générés`);
-    
-    // Attacher les événements
-    attachProjectEvents();
-    
-    // Initialiser l'état des boutons
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.classList.add('opacity-100');
-      btn.classList.remove('opacity-50');
-    });
-    
-    // Cliquer sur "PROJETS" pour réinitialiser le filtre
-    if (projectsHeading) {
-      projectsHeading.addEventListener('click', () => {
-        if (!isDetailMode) {
-          filterProjects(null);
-        }
-      });
-    }
-  } catch (error) {
-    console.error('Erreur lors du chargement des projets:', error);
-    // Afficher un message d'erreur dans la liste des projets
-    if (projectList) {
-      projectList.innerHTML = `<div class="text-red-500">Erreur: ${error.message}</div>`;
-    }
-  }
-}
-
-// Fonction pour générer la liste des projets
 function generateProjectList() {
-  if (!projectList) {
-    console.error('projectList non trouvé');
-    return;
-  }
+  if (!projectList || !projectsData || projectsData.length === 0) return;
   
   projectList.innerHTML = '';
-  
-  if (!projectsData || projectsData.length === 0) {
-    console.error('Aucune donnée de projet disponible');
-    return;
-  }
   
   projectsData.forEach(project => {
     const projectDiv = document.createElement('div');
@@ -364,32 +245,19 @@ function generateProjectList() {
     
     projectList.appendChild(projectDiv);
   });
-  
-  console.log(`Liste générée: ${projectsData.length} projets ajoutés`);
 }
 
-// Fonction pour générer les previews
 function generatePreviews() {
-  if (!mainContent) {
-    console.error('mainContent non trouvé');
-    return;
-  }
+  if (!mainContent || !projectsData || projectsData.length === 0) return;
   
-  // Supprimer les anciens previews
   const oldPreviews = mainContent.querySelectorAll('.preview-content');
   oldPreviews.forEach(preview => preview.remove());
-  
-  if (!projectsData || projectsData.length === 0) {
-    console.error('Aucune donnée de projet pour générer les previews');
-    return;
-  }
   
   projectsData.forEach(project => {
     const previewDiv = document.createElement('div');
     previewDiv.id = project.id;
     previewDiv.className = 'preview-content absolute inset-0 flex items-start justify-center overflow-y-auto p-8 opacity-0 pointer-events-none transition-opacity duration-200';
     
-    // Déterminer le layout selon le nombre d'images
     let gridClass = 'grid grid-cols-1 gap-8';
     if (project.images.length === 2) {
       gridClass = 'grid grid-cols-1 md:grid-cols-2 gap-8';
@@ -400,7 +268,6 @@ function generatePreviews() {
     const container = document.createElement('div');
     container.className = `w-full max-w-5xl ${gridClass}`;
     
-    // Ajouter les images
     project.images.forEach((imagePath, index) => {
       const img = document.createElement('img');
       img.src = imagePath;
@@ -413,328 +280,282 @@ function generatePreviews() {
     previewDiv.appendChild(container);
     mainContent.appendChild(previewDiv);
   });
-  
-  console.log(`Previews générés: ${projectsData.length} previews créés`);
 }
 
-// Fonction pour créer le mapping image -> projet
-function buildImageToProjectMap() {
-  imageToProjectMap.clear();
-  projectsData.forEach(project => {
-    project.images.forEach(imagePath => {
-      // Normaliser le chemin pour gérer les variations (avec/sans extension, etc.)
-      const normalizedPath = imagePath.toLowerCase();
-      imageToProjectMap.set(normalizedPath, project);
-      // Aussi mapper le nom de fichier seul
-      const fileName = imagePath.split('/').pop().toLowerCase();
-      imageToProjectMap.set(fileName, project);
-    });
-  });
-}
-
-// Fonction pour obtenir toutes les images de test
-function getAllTestImages() {
-  const allImages = [];
-  projectsData.forEach(project => {
-    project.images.forEach(imagePath => {
-      allImages.push({
-        path: imagePath,
-        project: project
-      });
-    });
-  });
-  return allImages;
-}
-
-// Fonction pour mélanger un tableau (Fisher-Yates)
-function shuffleArray(array) {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
-}
-
-// Fonction pour générer le carrousel d'images
 function generateImageCarousel() {
-  if (!mainContent) {
-    console.error('mainContent non trouvé');
-    return;
-  }
+  if (!mainContent) return;
   
-  // Supprimer l'ancien carrousel s'il existe
   if (imageCarousel) {
     imageCarousel.remove();
   }
   
-  // Construire le mapping image -> projet
-  buildImageToProjectMap();
+  // Afficher un indicateur de chargement
+  const loadingIndicator = document.createElement('div');
+  loadingIndicator.id = 'loading-indicator';
+  loadingIndicator.className = 'absolute inset-0 flex items-center justify-center bg-neutral-100 z-20';
+  loadingIndicator.innerHTML = `
+    <div class="flex flex-col items-center gap-4">
+      <div class="w-12 h-12 border-4 border-neutral-300 border-t-neutral-900 rounded-full animate-spin"></div>
+      <p class="text-sm font-roc-thin text-neutral-600">Chargement des images...</p>
+    </div>
+  `;
+  mainContent.appendChild(loadingIndicator);
   
   // Obtenir toutes les images selon le filtre
-  let imagesToShow = getAllTestImages();
-  
-  // Filtrer selon activeFilter
-  if (activeFilter) {
-    imagesToShow = imagesToShow.filter(img => img.project.category === activeFilter);
-  }
+  let imagesToShow = [];
+  projectsData.forEach(project => {
+    if (!activeFilter || project.category === activeFilter) {
+      project.images.forEach(imagePath => {
+        imagesToShow.push({ path: imagePath, project: project });
+      });
+    }
+  });
   
   if (imagesToShow.length === 0) {
+    loadingIndicator.remove();
     return;
   }
   
-  // Mélanger les images
   const shuffledImages = shuffleArray(imagesToShow);
   
-  // Créer le conteneur du carrousel
   imageCarousel = document.createElement('div');
   imageCarousel.id = 'image-carousel';
   imageCarousel.className = 'absolute inset-0 overflow-y-auto overflow-x-hidden p-8';
   
-  // Créer le conteneur du carrousel d'abord
-  imageCarousel.appendChild(document.createElement('div')); // Placeholder temporaire
-  
-  // Attendre que le DOM soit prêt pour calculer les dimensions
   setTimeout(() => {
-    // Calculer le nombre optimal de colonnes et lignes pour afficher toutes les images
-    const totalImages = shuffledImages.length;
-    const padding = 32; // 8 * 4 (p-8 = 2rem = 32px)
-    const gap = 16; // gap-4 = 1rem = 16px
+    const padding = 32;
+    const gap = 16;
     
-    // Obtenir les dimensions disponibles (en tenant compte du header et de la colonne gauche)
     const header = document.querySelector('header');
-    const headerHeight = header ? header.offsetHeight : 0;
     const aside = document.querySelector('aside');
-    const asideWidth = aside ? aside.offsetWidth : 0;
+    const availableWidth = window.innerWidth - (aside ? aside.offsetWidth : 0) - (padding * 2);
+    const availableHeight = window.innerHeight - (header ? header.offsetHeight : 0) - (padding * 2);
     
-    const availableWidth = window.innerWidth - asideWidth - (padding * 2);
-    const availableHeight = window.innerHeight - headerHeight - (padding * 2);
+    // Taille de base pour les images (sera ajustée dynamiquement)
+    const imageBaseWidth = Math.min(availableWidth * 0.25, 280);
     
-    // Calculer le nombre optimal de colonnes pour un layout masonry
-    // On essaie différentes configurations pour trouver celle qui s'adapte le mieux
-    let bestCols = 5;
-    let bestScale = 0;
-    
-    for (let cols = 4; cols <= 8; cols++) {
-      const cellWidth = (availableWidth - (gap * (cols - 1))) / cols;
-      // Estimer la hauteur moyenne nécessaire avec cette largeur
-      const estimatedHeight = (availableHeight / Math.ceil(totalImages / cols)) * 0.8;
-      const scale = Math.min(cellWidth / 200, estimatedHeight / 200); // 200px comme référence
-      
-      if (scale > bestScale) {
-        bestScale = scale;
-        bestCols = cols;
-      }
-    }
-    
-    // La taille optimale sera calculée après le chargement de toutes les images
-    
-    // Vider le conteneur
     imageCarousel.innerHTML = '';
     
-    // Créer un conteneur avec positionnement absolu pour le layout Tetris
     const container = document.createElement('div');
-    container.className = 'relative w-full';
+    container.className = 'relative';
+    container.style.width = `${availableWidth}px`;
     container.style.height = `${availableHeight}px`;
-    container.style.overflow = 'hidden';
+    container.style.margin = '0 auto';
+    container.style.overflow = 'visible';
     
-    // Tableau pour tracker la hauteur de chaque colonne
-    const columnHeights = new Array(bestCols).fill(0);
-    const columnWidth = (availableWidth - (gap * (bestCols - 1))) / bestCols;
-    
-    // Grille pour tracker les positions occupées (pour éviter les chevauchements)
-    const grid = [];
-    const cellSize = 10; // Taille des cellules de la grille en pixels
-    const gridCols = Math.ceil(availableWidth / cellSize);
-    const gridRows = Math.ceil(availableHeight / cellSize);
-    
-    // Initialiser la grille
-    for (let r = 0; r < gridRows; r++) {
-      grid[r] = new Array(gridCols).fill(false);
-    }
-    
-    // Fonction pour vérifier si une zone est libre
-    function isAreaFree(x, y, width, height) {
-      const startCol = Math.floor(x / cellSize);
-      const endCol = Math.ceil((x + width) / cellSize);
-      const startRow = Math.floor(y / cellSize);
-      const endRow = Math.ceil((y + height) / cellSize);
-      
-      if (endCol > gridCols || endRow > gridRows) return false;
-      
-      for (let r = startRow; r < endRow; r++) {
-        for (let c = startCol; c < endCol; c++) {
-          if (grid[r] && grid[r][c]) return false;
-        }
-      }
-      return true;
-    }
-    
-    // Fonction pour marquer une zone comme occupée
-    function markAreaOccupied(x, y, width, height) {
-      const startCol = Math.floor(x / cellSize);
-      const endCol = Math.ceil((x + width) / cellSize);
-      const startRow = Math.floor(y / cellSize);
-      const endRow = Math.ceil((y + height) / cellSize);
-      
-      for (let r = startRow; r < endRow; r++) {
-        for (let c = startCol; c < endCol; c++) {
-          if (grid[r]) grid[r][c] = true;
-        }
-      }
-    }
-    
-    // Fonction pour trouver la meilleure position (la plus basse, mais aussi la plus à gauche)
-    function findBestPosition(width, height) {
-      let bestX = 0;
-      let bestY = Infinity;
-      
-      // Essayer différentes positions en commençant par le haut
-      for (let y = 0; y <= availableHeight - height; y += cellSize) {
-        for (let x = 0; x <= availableWidth - width; x += cellSize) {
-          if (isAreaFree(x, y, width, height)) {
-            // Préférer les positions plus basses (pour remplir de bas en haut)
-            if (y < bestY || (y === bestY && x < bestX)) {
-              bestY = y;
-              bestX = x;
-            }
-          }
-        }
-      }
-      
-      // Si on n'a pas trouvé de position, essayer de trouver la colonne la plus basse
-      if (bestY === Infinity) {
-        let minHeight = columnHeights[0];
-        let minIndex = 0;
-        for (let i = 1; i < columnHeights.length; i++) {
-          if (columnHeights[i] < minHeight) {
-            minHeight = columnHeights[i];
-            minIndex = i;
-          }
-        }
-        bestX = minIndex * (columnWidth + gap);
-        bestY = minHeight;
-      }
-      
-      return { x: bestX, y: bestY };
-    }
-    
-    // Charger toutes les images d'abord pour connaître leurs dimensions
     let loadedImages = 0;
     const imageData = [];
-    const rawImageData = [];
     
     shuffledImages.forEach(({ path, project }) => {
       const img = new Image();
       img.src = path;
       img.onload = function() {
-        const aspectRatio = img.naturalWidth / img.naturalHeight;
+        const originalAspectRatio = img.naturalWidth / img.naturalHeight;
+        const isLandscape = originalAspectRatio >= 1;
+        const normalizedAspectRatio = isLandscape ? 16/9 : 9/16;
         
-        rawImageData.push({
-          path: path,
-          project: project,
-          aspectRatio: aspectRatio,
-          naturalWidth: img.naturalWidth,
-          naturalHeight: img.naturalHeight
-        });
-        
-        loadedImages++;
-        
-        // Quand toutes les images sont chargées, calculer la taille optimale et placer
-        if (loadedImages === shuffledImages.length) {
-          calculateOptimalSize();
-        }
-      };
-    });
-    
-    function calculateOptimalSize() {
-      // Calculer la surface totale nécessaire avec les ratios réels
-      let totalRatio = 0;
-      rawImageData.forEach(img => {
-        totalRatio += 1 / img.aspectRatio; // Somme des hauteurs pour une largeur de 1
-      });
-      
-      // Calculer la largeur optimale pour remplir l'espace disponible
-      // On veut que la somme des hauteurs soit proche de availableHeight
-      const optimalWidth = Math.sqrt((availableWidth * availableHeight) / (totalRatio * bestCols));
-      
-      // Ajuster pour mieux remplir (augmenter de 10-20%)
-      let testWidth = optimalWidth * 1.15;
-      let maxHeight = 0;
-      
-      // Tester différentes tailles pour trouver la meilleure
-      for (let scale = 0.8; scale <= 1.3; scale += 0.05) {
-        const testW = optimalWidth * scale;
-        const testHeights = rawImageData.map(img => testW / img.aspectRatio);
-        const totalTestHeight = testHeights.reduce((sum, h) => sum + h, 0);
-        const avgHeight = totalTestHeight / rawImageData.length;
-        const estimatedMaxHeight = Math.max(...testHeights) + (avgHeight * (bestCols - 1));
-        
-        if (estimatedMaxHeight <= availableHeight * 1.1) {
-          testWidth = testW;
-          maxHeight = estimatedMaxHeight;
+        let imgWidth = imageBaseWidth;
+        if (isLandscape) {
+          imgWidth = imageBaseWidth * (1.1 + Math.random() * 0.3);
         } else {
-          break;
+          imgWidth = imageBaseWidth * (0.7 + Math.random() * 0.3);
         }
-      }
-      
-      // Créer les données d'images avec la taille optimale
-      rawImageData.forEach(({ path, project, aspectRatio }) => {
-        const imgWidth = testWidth;
-        const imgHeight = imgWidth / aspectRatio;
+        
+        const imgHeight = imgWidth / normalizedAspectRatio;
         
         imageData.push({
           path: path,
           project: project,
           width: imgWidth,
           height: imgHeight,
-          aspectRatio: aspectRatio
+          aspectRatio: normalizedAspectRatio
+        });
+        
+        loadedImages++;
+        
+        if (loadedImages === shuffledImages.length) {
+          placeImages();
+        }
+      };
+    });
+    
+    function placeImages() {
+      const totalArea = availableWidth * availableHeight;
+      let totalImageArea = 0;
+      imageData.forEach(img => {
+        totalImageArea += img.width * img.height;
+      });
+      
+      const scaleFactor = Math.sqrt(totalArea * 0.75 / totalImageArea);
+      imageData.forEach(img => {
+        img.width *= scaleFactor;
+        img.height *= scaleFactor;
+      });
+      
+      // Créer des "noyaux" de nuage - points autour desquels les images se regroupent
+      const numClouds = Math.min(3 + Math.floor(imageData.length / 15), 6);
+      const clouds = [];
+      for (let i = 0; i < numClouds; i++) {
+        clouds.push({
+          centerX: (0.2 + Math.random() * 0.6) * availableWidth,
+          centerY: (0.2 + Math.random() * 0.6) * availableHeight,
+          radius: 150 + Math.random() * 200,
+          images: []
+        });
+      }
+      
+      // Assigner chaque image à un nuage proche
+      imageData.forEach((imageItem, index) => {
+        // Trouver le nuage le plus proche ou créer un nouveau si trop loin
+        let closestCloud = clouds[0];
+        let minDist = Infinity;
+        
+        clouds.forEach(cloud => {
+          const dist = Math.sqrt(
+            Math.pow(cloud.centerX - (availableWidth / 2), 2) +
+            Math.pow(cloud.centerY - (availableHeight / 2), 2)
+          );
+          if (dist < minDist) {
+            minDist = dist;
+            closestCloud = cloud;
+          }
+        });
+        
+        closestCloud.images.push(imageItem);
+      });
+      
+      // Placer les images dans chaque nuage
+      const placedImages = [];
+      const minGap = 15;
+      
+      clouds.forEach((cloud, cloudIndex) => {
+        cloud.images.forEach((imageItem, imgIndex) => {
+          let attempts = 0;
+          let placed = false;
+          const maxAttempts = 100;
+          
+          // Varier la taille pour plus de naturel
+          const sizeVariation = 0.75 + Math.random() * 0.5;
+          let width = imageItem.width * sizeVariation;
+          let height = imageItem.height * sizeVariation;
+          
+          // Limites de taille
+          const maxWidth = availableWidth * 0.35;
+          const maxHeight = availableHeight * 0.4;
+          if (width > maxWidth) {
+            width = maxWidth;
+            height = width / imageItem.aspectRatio;
+          }
+          if (height > maxHeight) {
+            height = maxHeight;
+            width = height * imageItem.aspectRatio;
+          }
+          
+          while (!placed && attempts < maxAttempts) {
+            // Position autour du centre du nuage avec distribution gaussienne
+            const angle = Math.random() * Math.PI * 2;
+            const distance = Math.random() * cloud.radius * (0.3 + Math.random() * 0.7);
+            const x = cloud.centerX + Math.cos(angle) * distance - width / 2;
+            const y = cloud.centerY + Math.sin(angle) * distance - height / 2;
+            
+            // Vérifier les limites
+            if (x < 0 || y < 0 || x + width > availableWidth || y + height > availableHeight) {
+              attempts++;
+              continue;
+            }
+            
+            // Vérifier les collisions
+            let collision = false;
+            for (const placedImg of placedImages) {
+              const distanceX = Math.abs(placedImg.x + placedImg.width/2 - (x + width/2));
+              const distanceY = Math.abs(placedImg.y + placedImg.height/2 - (y + height/2));
+              const minDistanceX = (placedImg.width + width) / 2 + minGap;
+              const minDistanceY = (placedImg.height + height) / 2 + minGap;
+              
+              if (distanceX < minDistanceX && distanceY < minDistanceY) {
+                collision = true;
+                break;
+              }
+            }
+            
+            if (!collision) {
+              // Rotation légère pour effet naturel
+              const rotation = (Math.random() - 0.5) * 12;
+              
+              placedImages.push({
+                x,
+                y,
+                width,
+                height,
+                rotation,
+                imageItem
+              });
+              placed = true;
+            }
+            
+            attempts++;
+          }
         });
       });
       
-      // Placer les images
-      placeImages();
-    }
-    
-    function placeImages() {
-      // Trier les images par taille (les plus grandes en premier pour mieux remplir)
-      imageData.sort((a, b) => (b.width * b.height) - (a.width * a.height));
+      // Si certaines images n'ont pas pu être placées, les placer aléatoirement
+      const unplacedImages = imageData.filter(img => 
+        !placedImages.some(placed => placed.imageItem === img)
+      );
       
-      imageData.forEach(({ path, project, width, height, aspectRatio }) => {
-        // Trouver la meilleure position
-        const position = findBestPosition(width, height);
-        const x = position.x;
-        const y = position.y;
+      unplacedImages.forEach(imageItem => {
+        const sizeVariation = 0.75 + Math.random() * 0.5;
+        let width = imageItem.width * sizeVariation;
+        let height = imageItem.height * sizeVariation;
         
-        // Marquer la zone comme occupée
-        markAreaOccupied(x, y, width, height);
-        
-        // Mettre à jour les hauteurs de colonnes pour les colonnes affectées
-        const startCol = Math.floor(x / (columnWidth + gap));
-        const endCol = Math.ceil((x + width) / (columnWidth + gap));
-        for (let i = startCol; i < endCol && i < columnHeights.length; i++) {
-          columnHeights[i] = Math.max(columnHeights[i], y + height + gap);
+        const maxWidth = availableWidth * 0.3;
+        const maxHeight = availableHeight * 0.35;
+        if (width > maxWidth) {
+          width = maxWidth;
+          height = width / imageItem.aspectRatio;
+        }
+        if (height > maxHeight) {
+          height = maxHeight;
+          width = height * imageItem.aspectRatio;
         }
         
-        // Créer le wrapper
+        const x = Math.random() * (availableWidth - width);
+        const y = Math.random() * (availableHeight - height);
+        const rotation = (Math.random() - 0.5) * 12;
+        
+        placedImages.push({ x, y, width, height, rotation, imageItem });
+      });
+      
+      placedImages.forEach(({ x, y, width, height, rotation, imageItem }) => {
         const imgWrapper = document.createElement('div');
         imgWrapper.className = 'absolute cursor-pointer group';
         imgWrapper.style.left = `${x}px`;
         imgWrapper.style.top = `${y}px`;
         imgWrapper.style.width = `${width}px`;
         imgWrapper.style.height = `${height}px`;
+        imgWrapper.style.transform = `rotate(${rotation}deg)`;
+        imgWrapper.style.transformOrigin = 'center center';
+        imgWrapper.style.transition = 'transform 0.3s ease-out, z-index 0.3s';
         imgWrapper.style.overflow = 'hidden';
         
-        // Créer l'image
         const img = document.createElement('img');
-        img.src = path;
-        img.alt = `${project.title} - Image`;
+        img.src = imageItem.path;
+        img.alt = `${imageItem.project.title} - Image`;
         img.className = 'w-full h-full object-cover transition-opacity duration-200 hover:opacity-80';
         img.style.display = 'block';
         
-        // Gérer le clic pour naviguer vers le projet
+        // Effet hover : légère rotation et zoom
+        imgWrapper.addEventListener('mouseenter', () => {
+          imgWrapper.style.transform = `rotate(${rotation * 1.1}deg) scale(1.08)`;
+          imgWrapper.style.zIndex = '10';
+        });
+        imgWrapper.addEventListener('mouseleave', () => {
+          imgWrapper.style.transform = `rotate(${rotation}deg) scale(1)`;
+          imgWrapper.style.zIndex = '1';
+        });
+        
         imgWrapper.addEventListener('click', () => {
-          const projectElement = Array.from(projects).find(p => p.dataset.target === project.id);
+          const projectElement = Array.from(projects).find(p => p.dataset.target === imageItem.project.id);
           if (projectElement) {
             const visibleProjects = getVisibleProjects();
             const visibleIndex = visibleProjects.indexOf(projectElement);
@@ -751,30 +572,29 @@ function generateImageCarousel() {
       });
       
       imageCarousel.appendChild(container);
-    }
       
+      // Masquer l'indicateur de chargement
+      const loadingIndicator = document.getElementById('loading-indicator');
+      if (loadingIndicator) {
+        loadingIndicator.remove();
+      }
+    }
   }, 0);
   
-  // Ajouter le carrousel au DOM immédiatement
   mainContent.appendChild(imageCarousel);
-  
-  console.log(`Carrousel généré: ${shuffledImages.length} images affichées`);
 }
 
-// Fonction pour attacher les événements aux projets
+// ============================================================================
+// ÉVÉNEMENTS
+// ============================================================================
+
 function attachProjectEvents() {
   let mouseLeaveTimeout = null;
   
   projects.forEach((project) => {
     project.addEventListener('mouseenter', () => {
-      if (isDetailMode) {
-        return;
-      }
+      if (isDetailMode || project.classList.contains('hidden')) return;
       
-      if (project.classList.contains('hidden')) {
-        return;
-      }
-
       if (mouseLeaveTimeout) {
         clearTimeout(mouseLeaveTimeout);
         mouseLeaveTimeout = null;
@@ -788,10 +608,8 @@ function attachProjectEvents() {
     });
     
     project.addEventListener('mouseleave', (e) => {
-      if (isDetailMode) {
-        return;
-      }
-
+      if (isDetailMode) return;
+      
       const relatedTarget = e.relatedTarget;
       const isMovingToAnotherProject = relatedTarget && relatedTarget.closest('.project:not(.hidden)');
       
@@ -807,9 +625,7 @@ function attachProjectEvents() {
     });
     
     project.addEventListener('click', () => {
-      if (project.classList.contains('hidden')) {
-        return;
-      }
+      if (project.classList.contains('hidden')) return;
       
       const visibleProjects = getVisibleProjects();
       const visibleIndex = visibleProjects.indexOf(project);
@@ -822,22 +638,147 @@ function attachProjectEvents() {
   });
 }
 
-// Fonction pour initialiser les références DOM
-function initDOMElements() {
-  if (!projectList || !mainContent) {
-    console.error('Éléments DOM non trouvés:', {
-      projectList: !!projectList,
-      mainContent: !!mainContent
-    });
-    return false;
+document.addEventListener('keydown', (e) => {
+  // Raccourci Escape : revenir à la liste depuis la vue détail
+  if (e.key === 'Escape' && isDetailMode) {
+    exitDetailMode();
+    return;
   }
-  return true;
+  
+  if (isDetailMode) return;
+  
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    const visibleProjects = getVisibleProjects();
+    
+    if (currentProjectIndex === -1) {
+      if (e.key === 'ArrowDown' && visibleProjects.length > 0) {
+        showProject(0);
+      } else if (e.key === 'ArrowUp' && visibleProjects.length > 0) {
+        showProject(visibleProjects.length - 1);
+      }
+    } else {
+      if (e.key === 'ArrowDown') {
+        if (currentProjectIndex === visibleProjects.length - 1) {
+          showBlank();
+        } else {
+          showProject(currentProjectIndex + 1);
+        }
+      } else {
+        if (currentProjectIndex === 0) {
+          showBlank();
+        } else {
+          showProject(currentProjectIndex - 1);
+        }
+      }
+    }
+  }
+});
+
+if (backToListButton) {
+  backToListButton.addEventListener('click', exitDetailMode);
 }
 
-// Charger les projets au démarrage
+// Gestion des animations de hover sur les boutons de filtre
+function setupFilterButtonHovers() {
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  if (filterButtons.length === 0) {
+    console.warn('Aucun bouton de filtre trouvé');
+    return;
+  }
+  
+  const buttonsArray = Array.from(filterButtons);
+  
+  filterButtons.forEach((btn, index) => {
+    btn.addEventListener('mouseenter', (e) => {
+      e.stopPropagation();
+      // Ajouter la classe au bouton survolé
+      btn.classList.add('btn-hovered');
+      
+      // Décaler les boutons à droite
+      for (let i = index + 1; i < buttonsArray.length; i++) {
+        buttonsArray[i].classList.add('btn-shift-right');
+        buttonsArray[i].classList.remove('btn-shift-left');
+      }
+      
+      // Décaler les boutons à gauche
+      for (let i = 0; i < index; i++) {
+        buttonsArray[i].classList.add('btn-shift-left');
+        buttonsArray[i].classList.remove('btn-shift-right');
+      }
+    });
+    
+    btn.addEventListener('mouseleave', () => {
+      // Retirer toutes les classes d'animation
+      btn.classList.remove('btn-hovered');
+      buttonsArray.forEach(b => {
+        b.classList.remove('btn-shift-right', 'btn-shift-left');
+      });
+    });
+    
+    btn.addEventListener('click', () => {
+      const filter = btn.dataset.filter;
+      filterProjects(activeFilter === filter ? null : filter);
+    });
+  });
+}
+
+// Appeler la fonction après le chargement des projets
+// (sera appelée dans loadProjects après que les boutons soient dans le DOM)
+
+// ============================================================================
+// INITIALISATION
+// ============================================================================
+
+async function loadProjects() {
+  try {
+    const response = await fetch('projects.json');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    
+    if (!data.projects || !Array.isArray(data.projects)) {
+      throw new Error('Format JSON invalide: projects array manquant');
+    }
+    
+    projectsData = data.projects;
+    
+    generateProjectList();
+    generatePreviews();
+    generateImageCarousel();
+    
+    projects = Array.from(document.querySelectorAll('.project'));
+    previews = Array.from(document.querySelectorAll('.preview-content'));
+    
+    attachProjectEvents();
+    
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.classList.add('opacity-100');
+      btn.classList.remove('opacity-30', 'opacity-50');
+    });
+    
+    // Configurer les animations de hover sur les boutons
+    setupFilterButtonHovers();
+    
+    if (projectsHeading) {
+      projectsHeading.addEventListener('click', () => {
+        if (!isDetailMode) {
+          filterProjects(null);
+        }
+      });
+    }
+  } catch (error) {
+    console.error('Erreur lors du chargement des projets:', error);
+    if (projectList) {
+      projectList.innerHTML = `<div class="text-red-500">Erreur: ${error.message}</div>`;
+    }
+  }
+}
+
 function init() {
-  if (!initDOMElements()) {
-    console.error('Impossible d\'initialiser: éléments DOM manquants');
+  if (!projectList || !mainContent) {
+    console.error('Éléments DOM non trouvés');
     return;
   }
   loadProjects();
@@ -846,13 +787,5 @@ function init() {
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', init);
 } else {
-  // DOM déjà chargé
   init();
 }
-
-// Initialiser l'état des boutons au chargement (tous actifs par défaut)
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.classList.add('opacity-100');
-  btn.classList.remove('opacity-50');
-});
-

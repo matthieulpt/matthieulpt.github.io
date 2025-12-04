@@ -32,6 +32,29 @@
       }
       body {
         font-family: 'Roc Grotesk', sans-serif;
+        transition: background-color 0.4s ease-out;
+        position: relative;
+      }
+      body::after {
+        content: '';
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2rem;
+        background: linear-gradient(to bottom, transparent, rgba(245, 245, 245, 0.75));
+        pointer-events: none;
+        z-index: 100;
+        transition: background 0.4s ease-out;
+      }
+      body.gradient-photo::after {
+        background: linear-gradient(to bottom, transparent, rgba(254, 242, 242, 0.75));
+      }
+      body.gradient-video::after {
+        background: linear-gradient(to bottom, transparent, rgba(240, 253, 244, 0.75));
+      }
+      body.gradient-graphic::after {
+        background: linear-gradient(to bottom, transparent, rgba(239, 246, 255, 0.75));
       }
       .font-roc-wide-black {
         font-family: 'Roc Grotesk Wide', sans-serif;
@@ -79,19 +102,67 @@
       .preview-content img {
         opacity: 0;
         transform: translateY(10px);
-        transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+        transition: opacity 0.15s ease-out, transform 0.15s ease-out;
       }
       .preview-content.opacity-100 img {
         opacity: 1;
         transform: translateY(0);
-        transition-delay: 0.1s;
+        transition-delay: 0.03s;
       }
       main {
         scroll-behavior: smooth;
       }
       .filter-btn {
-        transition: opacity 0.2s ease-out;
+        transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease-out;
         cursor: pointer;
+        position: relative;
+        display: inline-flex;
+        transform: translateX(0);
+      }
+      /* Quand un bouton est survolé (via JavaScript), il grossit */
+      .filter-btn.btn-hovered {
+        transform: scale(1.12) !important;
+        z-index: 10;
+      }
+      /* Classes pour les décalages */
+      .filter-btn.btn-shift-right.btn-hovered {
+        transform: scale(1.12) translateX(12px) !important;
+      }
+      .filter-btn.btn-shift-right:not(.btn-hovered) {
+        transform: translateX(12px) !important;
+      }
+      .filter-btn.btn-shift-left:not(.btn-hovered) {
+        transform: translateX(-8px) !important;
+      }
+      /* Animation du rond coloré */
+      .filter-btn .w-3 {
+        transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-block;
+      }
+      .filter-btn.btn-hovered .w-3 {
+        transform: scale(1.2);
+      }
+      /* Animation pour le titre PROJETS */
+      #projects-heading {
+        transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+      }
+      #projects-heading:hover {
+        transform: scale(1.05);
+      }
+      /* Animation pour le lien Instagram */
+      header a[href*="instagram"] {
+        transition: transform 0.2s ease-out;
+      }
+      header a[href*="instagram"]:hover {
+        transform: translateX(4px);
+      }
+      header a[href*="instagram"]:hover svg {
+        transform: rotate(15deg) scale(1.1);
+        transition: transform 0.2s ease-out;
+      }
+      header a[href*="instagram"] svg {
+        transition: transform 0.2s ease-out;
+        display: inline-block;
       }
       .project.hidden {
         display: none;
@@ -102,64 +173,22 @@
       /* Dégradé en bas de la colonne gauche */
       aside {
         position: relative;
+        transition: background-color 0.4s ease-out;
       }
-      aside::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 4rem;
-        background: linear-gradient(to bottom, transparent, rgba(245, 245, 245, 0.75));
-        pointer-events: none;
-        z-index: 10;
+      main {
+        transition: background-color 0.4s ease-out;
       }
       /* Dégradé sur la liste de projets */
       #project-list {
         position: relative;
       }
-      #project-list::after {
-        content: '';
-        position: sticky;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 4rem;
-        background: linear-gradient(to bottom, transparent, rgba(245, 245, 245, 0.75));
-        pointer-events: none;
-        z-index: 10;
-        margin-top: -4rem;
-      }
       /* Dégradé en bas de la zone de droite */
       main {
         position: relative;
       }
-      main::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 4rem;
-        background: linear-gradient(to bottom, transparent, rgba(245, 245, 245, 0.75));
-        pointer-events: none;
-        z-index: 10;
-      }
       /* Dégradé sur les previews scrollables */
       .preview-content {
         position: relative;
-      }
-      .preview-content::after {
-        content: '';
-        position: sticky;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 4rem;
-        background: linear-gradient(to bottom, transparent, rgba(245, 245, 245, 0.75));
-        pointer-events: none;
-        z-index: 10;
-        margin-top: -4rem;
       }
     </style>
     <script src="https://cdn.tailwindcss.com"></script>
