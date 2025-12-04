@@ -46,6 +46,7 @@
         pointer-events: none;
         z-index: 100;
         transition: background 0.4s ease-out;
+        will-change: auto;
       }
       body.gradient-photo::after {
         background: linear-gradient(to bottom, transparent, rgba(254, 242, 242, 0.75));
@@ -151,18 +152,25 @@
       }
       /* Animation pour le lien Instagram */
       header a[href*="instagram"] {
+        display: inline-flex;
+        align-items: center;
+        position: relative;
+        z-index: 1;
+      }
+      header a[href*="instagram"] span {
+        display: inline-block;
         transition: transform 0.2s ease-out;
       }
-      header a[href*="instagram"]:hover {
+      header a[href*="instagram"]:hover span {
         transform: translateX(4px);
-      }
-      header a[href*="instagram"]:hover svg {
-        transform: rotate(15deg) scale(1.1);
-        transition: transform 0.2s ease-out;
       }
       header a[href*="instagram"] svg {
         transition: transform 0.2s ease-out;
         display: inline-block;
+        transform-origin: center center;
+      }
+      header a[href*="instagram"]:hover svg {
+        transform: rotate(15deg) scale(1.1);
       }
       .project.hidden {
         display: none;

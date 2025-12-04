@@ -541,13 +541,13 @@ function generateImageCarousel() {
         const img = document.createElement('img');
         img.src = imageItem.path;
         img.alt = `${imageItem.project.title} - Image`;
-        img.className = 'w-full h-full object-cover transition-opacity duration-200 hover:opacity-80';
+        img.className = 'w-full h-full object-cover';
         img.style.display = 'block';
         
-        // Effet hover : légère rotation et zoom
+        // Effet hover : zoom et passage au premier plan (pas de transparence)
         imgWrapper.addEventListener('mouseenter', () => {
-          imgWrapper.style.transform = `rotate(${rotation * 1.1}deg) scale(1.08)`;
-          imgWrapper.style.zIndex = '10';
+          imgWrapper.style.transform = `rotate(${rotation}deg) scale(1.15)`;
+          imgWrapper.style.zIndex = '20';
         });
         imgWrapper.addEventListener('mouseleave', () => {
           imgWrapper.style.transform = `rotate(${rotation}deg) scale(1)`;
