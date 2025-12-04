@@ -22,7 +22,6 @@ const detailTitle = document.getElementById('detail-title');
 const detailDescription = document.getElementById('detail-description');
 const projectsHeading = document.getElementById('projects-heading');
 const mainContent = document.querySelector('main');
-const aboutButton = document.getElementById('about-button');
 const aboutView = document.getElementById('about-view');
 const aboutTitle = document.getElementById('about-title');
 const aboutDescription = document.getElementById('about-description');
@@ -1188,6 +1187,10 @@ function init() {
     console.error('Éléments DOM non trouvés');
     return;
   }
+  
+  // Récupérer le bouton "À propos" après le chargement du DOM
+  const aboutButton = document.getElementById('about-button');
+  
   loadProjects();
   
   // Fonction pour gérer le clic sur "À propos"
@@ -1220,6 +1223,8 @@ function init() {
   // Gérer le clic sur le bouton "À propos" (logo + nom)
   if (aboutButton) {
     aboutButton.addEventListener('click', handleAboutClick);
+  } else {
+    console.error('Bouton "À propos" non trouvé dans le DOM');
   }
 }
 

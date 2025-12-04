@@ -383,7 +383,11 @@
         display: inline-flex;
         align-items: center;
         position: relative;
-        z-index: 1;
+        z-index: 10;
+        background: none;
+        border: none;
+        padding: 0;
+        margin: 0;
       }
       #about-button svg {
         align-self: flex-start;
@@ -438,6 +442,7 @@
         <div class="flex flex-col gap-2 header-name">
           <button
             id="about-button"
+            type="button"
             class="inline-flex items-center gap-2 cursor-pointer"
             title="À propos"
           >
