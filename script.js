@@ -6,6 +6,7 @@ let projects = [];
 let previews = [];
 let projectsData = [];
 let imageCarousel = null;
+let imageCarouselFadeTimeout = null;
 
 let activePreview = null;
 let currentProjectIndex = -1; // -1 = état vide
@@ -29,20 +30,53 @@ const FADE_DURATION = 200;
 
 function fadeIn(element) {
   if (!element) return;
-  if (!element.classList.contains('hidden')) return;
+  
+  // Annuler toute animation fadeOut en cours
+  if (imageCarouselFadeTimeout) {
+    clearTimeout(imageCarouselFadeTimeout);
+    imageCarouselFadeTimeout = null;
+  }
+  
+  // Si l'élément est déjà visible et n'a pas opacity-0, ne rien faire
+  if (!element.classList.contains('hidden') && !element.classList.contains('opacity-0')) {
+    return;
+  }
+  
+  // Retirer hidden (même si en cours de fadeOut)
   element.classList.remove('hidden');
-  element.classList.add('opacity-0');
-  requestAnimationFrame(() => {
-    element.classList.remove('opacity-0');
-  });
+  
+  // Si l'élément a déjà opacity-0 (en cours de fadeOut), on peut directement l'animer
+  if (element.classList.contains('opacity-0')) {
+    requestAnimationFrame(() => {
+      element.classList.remove('opacity-0');
+    });
+  } else {
+    // Sinon, faire l'animation complète
+    element.classList.add('opacity-0');
+    requestAnimationFrame(() => {
+      element.classList.remove('opacity-0');
+    });
+  }
 }
 
 function fadeOut(element) {
   if (!element) return;
-  if (element.classList.contains('hidden')) return;
+  
+  // Annuler toute animation fadeIn en cours
+  if (imageCarouselFadeTimeout) {
+    clearTimeout(imageCarouselFadeTimeout);
+    imageCarouselFadeTimeout = null;
+  }
+  
+  // Si l'élément est déjà caché, ne rien faire
+  if (element.classList.contains('hidden')) {
+    return;
+  }
+  
   element.classList.add('opacity-0');
-  setTimeout(() => {
+  imageCarouselFadeTimeout = setTimeout(() => {
     element.classList.add('hidden');
+    imageCarouselFadeTimeout = null;
   }, FADE_DURATION);
 }
 
@@ -122,7 +156,7 @@ function filterProjects(category) {
   });
   
   // Afficher/masquer les projets
-  projects.forEach(project => {
+projects.forEach(project => {
     if (category === null || project.dataset.category === category) {
       project.classList.remove('hidden');
     } else {
@@ -147,7 +181,8 @@ function showBlank() {
   });
   
   if (imageCarousel) {
-    imageCarousel.classList.remove('hidden');
+    // Fade-in du carrousel avec animation
+    fadeIn(imageCarousel);
   }
   
   activePreview = null;
@@ -172,17 +207,18 @@ function showProject(visibleIndex) {
   project.classList.add('project-active');
   
   if (imageCarousel) {
-    imageCarousel.classList.add('hidden');
+    // Fade-out du carrousel avec animation
+    fadeOut(imageCarousel);
   }
   
-  previews.forEach(preview => {
+    previews.forEach(preview => {
     if (preview === targetPreview) {
       preview.classList.remove('opacity-0', 'pointer-events-none');
-      preview.classList.add('opacity-100');
+        preview.classList.add('opacity-100');
       activePreview = preview;
-    } else {
+      } else {
       preview.classList.add('opacity-0', 'pointer-events-none');
-      preview.classList.remove('opacity-100');
+        preview.classList.remove('opacity-100');
     }
   });
 }
@@ -201,7 +237,9 @@ function enterDetailMode(project) {
   projectList.classList.add('hidden');
   projectsHeading.classList.add('hidden');
   if (filterButtons) filterButtons.classList.add('hidden');
-  if (imageCarousel) imageCarousel.classList.add('hidden');
+  if (imageCarousel) {
+    fadeOut(imageCarousel);
+  }
   
   fadeIn(projectDetail);
 }
@@ -285,6 +323,11 @@ function generatePreviews() {
 function generateImageCarousel() {
   if (!mainContent) return;
   
+  // Ne pas recréer le carrousel si on est en mode détail ou si un projet est sélectionné
+  if (isDetailMode || currentProjectIndex !== -1) {
+    return;
+  }
+  
   if (imageCarousel) {
     imageCarousel.remove();
   }
@@ -321,6 +364,9 @@ function generateImageCarousel() {
   imageCarousel = document.createElement('div');
   imageCarousel.id = 'image-carousel';
   imageCarousel.className = 'absolute inset-0 overflow-y-auto overflow-x-hidden p-8';
+  
+  // Le masquage sur mobile est géré par CSS media query
+  // Le masquage sur desktop est géré par showProject() et enterDetailMode()
   
   setTimeout(() => {
     const padding = 32;
@@ -526,17 +572,21 @@ function generateImageCarousel() {
         placedImages.push({ x, y, width, height, rotation, imageItem });
       });
       
-      placedImages.forEach(({ x, y, width, height, rotation, imageItem }) => {
+      placedImages.forEach(({ x, y, width, height, rotation, imageItem }, index) => {
         const imgWrapper = document.createElement('div');
-        imgWrapper.className = 'absolute cursor-pointer group';
+        imgWrapper.className = 'absolute cursor-pointer group image-carousel-item';
         imgWrapper.style.left = `${x}px`;
         imgWrapper.style.top = `${y}px`;
         imgWrapper.style.width = `${width}px`;
         imgWrapper.style.height = `${height}px`;
-        imgWrapper.style.transform = `rotate(${rotation}deg)`;
+        imgWrapper.style.transform = `rotate(${rotation}deg) scale(0.8)`;
         imgWrapper.style.transformOrigin = 'center center';
-        imgWrapper.style.transition = 'transform 0.3s ease-out, z-index 0.3s';
+        imgWrapper.style.transition = 'transform 0.3s ease-out, z-index 0.3s, opacity 0.4s ease-out';
         imgWrapper.style.overflow = 'hidden';
+        imgWrapper.style.opacity = '0';
+        
+        // Stocker la rotation pour l'utiliser dans les event listeners
+        imgWrapper.dataset.rotation = rotation;
         
         const img = document.createElement('img');
         img.src = imageItem.path;
@@ -546,11 +596,13 @@ function generateImageCarousel() {
         
         // Effet hover : zoom et passage au premier plan (pas de transparence)
         imgWrapper.addEventListener('mouseenter', () => {
-          imgWrapper.style.transform = `rotate(${rotation}deg) scale(1.15)`;
+          const currentRotation = imgWrapper.dataset.rotation;
+          imgWrapper.style.transform = `rotate(${currentRotation}deg) scale(1.15)`;
           imgWrapper.style.zIndex = '20';
         });
         imgWrapper.addEventListener('mouseleave', () => {
-          imgWrapper.style.transform = `rotate(${rotation}deg) scale(1)`;
+          const currentRotation = imgWrapper.dataset.rotation;
+          imgWrapper.style.transform = `rotate(${currentRotation}deg) scale(1)`;
           imgWrapper.style.zIndex = '1';
         });
         
@@ -569,6 +621,13 @@ function generateImageCarousel() {
         
         imgWrapper.appendChild(img);
         container.appendChild(imgWrapper);
+        
+        // Animation d'apparition avec délai progressif pour effet de cascade
+        setTimeout(() => {
+          imgWrapper.style.opacity = '1';
+          imgWrapper.style.transform = `rotate(${rotation}deg) scale(1)`;
+          imgWrapper.classList.add('animate-in');
+        }, index * 30); // 30ms de délai entre chaque image
       });
       
       imageCarousel.appendChild(container);
@@ -577,6 +636,13 @@ function generateImageCarousel() {
       const loadingIndicator = document.getElementById('loading-indicator');
       if (loadingIndicator) {
         loadingIndicator.remove();
+      }
+      
+      // Si un projet est sélectionné ou si on est en mode détail, masquer le carrousel
+      if (currentProjectIndex !== -1 || isDetailMode) {
+        fadeOut(imageCarousel);
+      } else {
+        fadeIn(imageCarousel);
       }
     }
   }, 0);
