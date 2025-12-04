@@ -185,6 +185,14 @@ function showBlank() {
     fadeIn(imageCarousel);
   }
   
+  // Masquer les images de détail desktop si elles existent
+  if (mainContent) {
+    const detailImagesDesktop = mainContent.querySelector('#detail-images-desktop');
+    if (detailImagesDesktop) {
+      detailImagesDesktop.style.display = 'none';
+    }
+  }
+  
   activePreview = null;
 }
 
@@ -209,6 +217,14 @@ function showProject(visibleIndex) {
   if (imageCarousel) {
     // Fade-out du carrousel avec animation
     fadeOut(imageCarousel);
+  }
+  
+  // Masquer les images de détail desktop si elles existent
+  if (mainContent) {
+    const detailImagesDesktop = mainContent.querySelector('#detail-images-desktop');
+    if (detailImagesDesktop) {
+      detailImagesDesktop.style.display = 'none';
+    }
   }
   
     previews.forEach(preview => {
@@ -244,13 +260,53 @@ function enterDetailMode(project) {
     while (detailImagesContainer.firstChild) {
       detailImagesContainer.removeChild(detailImagesContainer.firstChild);
     }
+    // Layout avec maximum 2 colonnes pour mobile
+    const container = document.createElement('div');
+    container.className = 'grid grid-cols-1 sm:grid-cols-2 gap-4';
     projectData.images.forEach((imagePath, index) => {
       const img = document.createElement('img');
       img.src = imagePath;
       img.alt = `${title} - Image ${index + 1}`;
       img.className = 'w-full h-auto object-contain';
       img.loading = 'lazy';
-      detailImagesContainer.appendChild(img);
+      container.appendChild(img);
+    });
+    detailImagesContainer.appendChild(container);
+  }
+  
+  // Ajouter les images pour desktop (dans main à droite)
+  if (mainContent && projectData && projectData.images) {
+    // Supprimer les anciennes images de détail
+    const oldDetailImages = mainContent.querySelector('#detail-images-desktop');
+    if (oldDetailImages) {
+      oldDetailImages.remove();
+    }
+    
+    // Créer le conteneur pour les images de détail desktop
+    const detailImagesDesktop = document.createElement('div');
+    detailImagesDesktop.id = 'detail-images-desktop';
+    detailImagesDesktop.className = 'absolute inset-0 flex items-start justify-center overflow-y-auto p-8';
+    
+    // Layout avec maximum 2 colonnes
+    const container = document.createElement('div');
+    container.className = 'grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl';
+    
+    projectData.images.forEach((imagePath, index) => {
+      const img = document.createElement('img');
+      img.src = imagePath;
+      img.alt = `${title} - Image ${index + 1}`;
+      img.className = 'w-full h-auto object-contain shadow-lg';
+      img.loading = 'lazy';
+      container.appendChild(img);
+    });
+    
+    detailImagesDesktop.appendChild(container);
+    mainContent.appendChild(detailImagesDesktop);
+    
+    // Masquer toutes les previews en mode détail
+    previews.forEach(preview => {
+      preview.classList.add('opacity-0', 'pointer-events-none');
+      preview.classList.remove('opacity-100');
     });
   }
   
@@ -295,6 +351,14 @@ function exitDetailMode() {
     // Vider le conteneur d'images
     while (detailImagesContainer.firstChild) {
       detailImagesContainer.removeChild(detailImagesContainer.firstChild);
+    }
+  }
+  
+  // Nettoyer les images desktop
+  if (mainContent) {
+    const detailImagesDesktop = mainContent.querySelector('#detail-images-desktop');
+    if (detailImagesDesktop) {
+      detailImagesDesktop.remove();
     }
   }
   
@@ -407,12 +471,8 @@ function generatePreviews() {
     previewDiv.id = project.id;
     previewDiv.className = 'preview-content absolute inset-0 flex items-start justify-center overflow-y-auto p-8 opacity-0 pointer-events-none transition-opacity duration-200';
     
-    let gridClass = 'grid grid-cols-1 gap-8';
-    if (project.images.length === 2) {
-      gridClass = 'grid grid-cols-1 md:grid-cols-2 gap-8';
-    } else if (project.images.length >= 3) {
-      gridClass = 'grid grid-cols-1 md:grid-cols-3 gap-8';
-    }
+    // Maximum 2 colonnes, le reste scrollable
+    let gridClass = 'grid grid-cols-1 md:grid-cols-2 gap-8';
     
     const container = document.createElement('div');
     container.className = `w-full max-w-5xl ${gridClass}`;
