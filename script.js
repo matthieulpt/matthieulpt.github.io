@@ -11,6 +11,7 @@ let imageCarouselFadeTimeout = null;
 let activePreview = null;
 let currentProjectIndex = -1; // -1 = état vide
 let isDetailMode = false;
+let isAboutMode = false;
 let activeFilter = null; // null = tous les projets, 'photo', 'video', 'graphic'
 
 const projectList = document.getElementById('project-list');
@@ -21,6 +22,10 @@ const detailTitle = document.getElementById('detail-title');
 const detailDescription = document.getElementById('detail-description');
 const projectsHeading = document.getElementById('projects-heading');
 const mainContent = document.querySelector('main');
+const aboutButton = document.getElementById('about-button');
+const aboutView = document.getElementById('about-view');
+const aboutTitle = document.getElementById('about-title');
+const aboutDescription = document.getElementById('about-description');
 
 const FADE_DURATION = 200;
 
@@ -172,6 +177,11 @@ projects.forEach(project => {
 }
 
 function showBlank() {
+  // Masquer la vue "à propos" si elle est ouverte
+  if (isAboutMode) {
+    hideAboutView();
+  }
+  
   currentProjectIndex = -1;
   projects.forEach(p => p.classList.remove('project-active'));
   
@@ -180,9 +190,14 @@ function showBlank() {
     preview.classList.remove('opacity-100');
   });
   
-  if (imageCarousel) {
+  // Ne pas afficher le carrousel si on est en mode "À propos"
+  if (imageCarousel && !isAboutMode) {
     // Fade-in du carrousel avec animation
     fadeIn(imageCarousel);
+  } else if (imageCarousel && isAboutMode) {
+    // S'assurer que le carrousel est bien masqué en mode "À propos"
+    fadeOut(imageCarousel);
+    imageCarousel.classList.add('hidden');
   }
   
   // Masquer les images de détail desktop si elles existent
@@ -197,6 +212,11 @@ function showBlank() {
 }
 
 function showProject(visibleIndex) {
+  // Masquer la vue "à propos" si elle est ouverte
+  if (isAboutMode) {
+    hideAboutView();
+  }
+  
   const visibleProjects = getVisibleProjects();
   
   if (visibleIndex < 0 || visibleIndex >= visibleProjects.length) {
@@ -328,8 +348,141 @@ function enterDetailMode(project) {
   fadeIn(projectDetail);
 }
 
-function exitDetailMode() {
+// ============================================================================
+// GESTION DE LA VUE "À PROPOS"
+// ============================================================================
+
+function showAboutView() {
+  // Ne pas afficher si on est encore en mode détail (la sortie doit être gérée par handleAboutClick)
+  if (isDetailMode) {
+    return;
+  }
+  
+  isAboutMode = true;
+  
+  // Vérifier si on est en mode mobile portrait
+  const isMobilePortrait = window.innerWidth <= 768 && window.matchMedia('(orientation: portrait)').matches;
+  
+  if (isMobilePortrait) {
+    // Mode mobile : utiliser la même structure que les projets (project-detail)
+    if (!projectDetail || !detailTitle || !detailDescription) return;
+    
+    // Masquer les projets et le titre
+    projectList.classList.add('hidden');
+    projectsHeading.classList.add('hidden');
+    if (filterButtons) filterButtons.classList.add('hidden');
+    
+    // Ajouter la classe detail-mode au body pour masquer le header en mobile
+    document.body.classList.add('detail-mode');
+    
+    // Définir le titre et la description
+    detailTitle.textContent = 'À propos';
+    detailDescription.textContent = 'Description à personnaliser. Vous pouvez ajouter ici une présentation de votre travail, votre parcours, ou toute autre information pertinente.';
+    detailDescription.classList.remove('hidden');
+    
+    // Masquer les images mobiles (pas d'images pour "À propos")
+    const detailImagesContainer = document.getElementById('detail-images-mobile');
+    if (detailImagesContainer) {
+      while (detailImagesContainer.firstChild) {
+        detailImagesContainer.removeChild(detailImagesContainer.firstChild);
+      }
+    }
+    
+    // Configurer le scroll pour le bouton retour en mode mobile
+    setupBackButtonScroll();
+    
+    // Afficher la vue détail (comme pour un projet)
+    projectDetail.classList.remove('hidden');
+    fadeIn(projectDetail);
+  } else {
+    // Mode desktop : utiliser aboutView dans main
+    if (!aboutView || !aboutTitle || !aboutDescription) return;
+    
+    // Masquer les autres contenus
+    if (imageCarousel) {
+      fadeOut(imageCarousel);
+      // S'assurer que le carrousel est bien masqué
+      if (imageCarousel) {
+        imageCarousel.classList.add('hidden');
+      }
+    }
+    previews.forEach(preview => {
+      preview.classList.add('opacity-0', 'pointer-events-none');
+      preview.classList.remove('opacity-100');
+    });
+    if (mainContent) {
+      const detailImagesDesktop = mainContent.querySelector('#detail-images-desktop');
+      if (detailImagesDesktop) {
+        detailImagesDesktop.style.display = 'none';
+      }
+    }
+    
+    // Définir le titre et la description
+    aboutTitle.textContent = 'À propos';
+    aboutDescription.textContent = 'Description à personnaliser. Vous pouvez ajouter ici une présentation de votre travail, votre parcours, ou toute autre information pertinente.';
+    
+    // Afficher la vue
+    aboutView.classList.remove('hidden');
+    fadeIn(aboutView);
+  }
+}
+
+function hideAboutView() {
+  isAboutMode = false;
+  
+  // Vérifier si on est en mode mobile portrait
+  const isMobilePortrait = window.innerWidth <= 768 && window.matchMedia('(orientation: portrait)').matches;
+  
+  if (isMobilePortrait) {
+    // Mode mobile : utiliser la même structure que les projets
+    if (!projectDetail) return;
+    
+    // Retirer la classe detail-mode du body pour réafficher le header
+    document.body.classList.remove('detail-mode');
+    
+    // Nettoyer le listener de scroll
+    cleanupBackButtonScroll();
+    
+    fadeOut(projectDetail);
+    
+    // Réafficher les projets après la transition
+    setTimeout(() => {
+      projectDetail.classList.add('hidden');
+      fadeIn(projectsHeading);
+      fadeIn(projectList);
+      if (filterButtons) filterButtons.classList.remove('hidden');
+      
+      // Remettre en haut de la liste de projets
+      const aside = document.querySelector('aside');
+      if (aside) {
+        aside.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, FADE_DURATION);
+  } else {
+    // Mode desktop : utiliser aboutView
+    if (!aboutView) return;
+    
+    fadeOut(aboutView);
+    
+    // Réafficher le contenu par défaut après la transition
+    setTimeout(() => {
+      aboutView.classList.add('hidden');
+      if (currentProjectIndex === -1 && !isDetailMode) {
+        if (imageCarousel) {
+          fadeIn(imageCarousel);
+        }
+      }
+    }, FADE_DURATION);
+  }
+}
+
+function exitDetailMode(skipShowBlank = false) {
   isDetailMode = false;
+  
+  // Masquer la vue "à propos" si elle est ouverte
+  if (isAboutMode) {
+    hideAboutView();
+  }
   
   // Retirer la classe detail-mode du body pour réafficher le header
   document.body.classList.remove('detail-mode');
@@ -368,7 +521,16 @@ function exitDetailMode() {
     aside.scrollTo({ top: 0, behavior: 'smooth' });
   }
   
-  showBlank();
+  // Ne pas appeler showBlank si on passe directement à "À propos"
+  if (!skipShowBlank) {
+    showBlank();
+  } else {
+    // Masquer le carrousel immédiatement pour éviter qu'il apparaisse
+    if (imageCarousel) {
+      imageCarousel.classList.add('hidden');
+      fadeOut(imageCarousel);
+    }
+  }
 }
 
 // ============================================================================
@@ -913,7 +1075,15 @@ document.addEventListener('keydown', (e) => {
 });
 
 if (backToListButton) {
-  backToListButton.addEventListener('click', exitDetailMode);
+  backToListButton.addEventListener('click', () => {
+    // Si on est en mode "À propos", masquer la vue "À propos"
+    if (isAboutMode) {
+      hideAboutView();
+    } else {
+      // Sinon, sortir du mode détail normal
+      exitDetailMode();
+    }
+  });
 }
 
 // Gestion des animations de hover sur les boutons de filtre
@@ -1019,6 +1189,38 @@ function init() {
     return;
   }
   loadProjects();
+  
+  // Fonction pour gérer le clic sur "À propos"
+  function handleAboutClick(e) {
+    e.preventDefault();
+    if (isAboutMode) {
+      hideAboutView();
+    } else {
+      // Sortir du mode détail si on y est
+      if (isDetailMode) {
+        // Masquer le carrousel immédiatement pour éviter qu'il apparaisse
+        if (imageCarousel) {
+          imageCarousel.classList.add('hidden');
+          fadeOut(imageCarousel);
+        }
+        // Sortir du mode détail sans réafficher le carrousel
+        exitDetailMode(true);
+        // Attendre que la sortie du mode détail soit terminée avant d'afficher "À propos"
+        setTimeout(() => {
+          showAboutView();
+        }, FADE_DURATION);
+      } else {
+        // Réinitialiser l'état des projets
+        showBlank();
+        showAboutView();
+      }
+    }
+  }
+  
+  // Gérer le clic sur le bouton "À propos" (logo + nom)
+  if (aboutButton) {
+    aboutButton.addEventListener('click', handleAboutClick);
+  }
 }
 
 if (document.readyState === 'loading') {
