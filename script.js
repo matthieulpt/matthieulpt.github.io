@@ -662,6 +662,13 @@ function generateImageCarousel() {
   
   if (imageCarousel) {
     imageCarousel.remove();
+    imageCarousel = null;
+  }
+  
+  // Supprimer l'ancien indicateur de chargement s'il existe
+  const oldLoadingIndicator = document.getElementById('loading-indicator');
+  if (oldLoadingIndicator) {
+    oldLoadingIndicator.remove();
   }
   
   // Afficher un indicateur de chargement
@@ -688,6 +695,10 @@ function generateImageCarousel() {
   
   if (imagesToShow.length === 0) {
     loadingIndicator.remove();
+    if (imageCarousel) {
+      imageCarousel.remove();
+      imageCarousel = null;
+    }
     return;
   }
   
@@ -699,6 +710,19 @@ function generateImageCarousel() {
   
   // Le masquage sur mobile est géré par CSS media query
   // Le masquage sur desktop est géré par showProject() et enterDetailMode()
+  
+  // Constantes de timeout
+  const MAX_LOAD_TIME = 5000; // 5 secondes maximum par image
+  const GLOBAL_TIMEOUT = 15000; // 15 secondes maximum au total
+  
+  // Protection supplémentaire : s'assurer que l'indicateur est masqué même en cas d'erreur
+  const safetyTimeout = setTimeout(() => {
+    const loadingIndicatorCheck = document.getElementById('loading-indicator');
+    if (loadingIndicatorCheck) {
+      console.warn('Timeout de sécurité : masquage forcé de l\'indicateur de chargement');
+      loadingIndicatorCheck.remove();
+    }
+  }, GLOBAL_TIMEOUT + 2000); // 2 secondes après le timeout global
   
   setTimeout(() => {
     const padding = 32;
@@ -724,25 +748,35 @@ function generateImageCarousel() {
     let loadedImages = 0;
     let failedImages = 0;
     const imageData = [];
-    const MAX_LOAD_TIME = 10000; // 10 secondes maximum par image
     let loadTimeout = null;
+    let allTimeouts = []; // Stocker tous les timeouts individuels
     
     // Fonction pour vérifier si toutes les images ont été traitées (chargées ou échouées)
     function checkAllImagesProcessed() {
       if (loadedImages + failedImages === shuffledImages.length) {
+        // Nettoyer tous les timeouts
         if (loadTimeout) {
           clearTimeout(loadTimeout);
           loadTimeout = null;
         }
+        allTimeouts.forEach(timeout => clearTimeout(timeout));
+        allTimeouts = [];
+        // Nettoyer le timeout de sécurité
+        clearTimeout(safetyTimeout);
         placeImages();
       }
     }
     
-    // Timeout global pour éviter une attente infinie
+    // Timeout global pour éviter une attente infinie - plus agressif
     loadTimeout = setTimeout(() => {
-      console.warn('Timeout lors du chargement des images. Affichage des images chargées.');
+      console.warn('Timeout global lors du chargement des images. Affichage des images chargées.');
+      // Nettoyer tous les timeouts individuels
+      allTimeouts.forEach(timeout => clearTimeout(timeout));
+      allTimeouts = [];
+      // Nettoyer le timeout de sécurité
+      clearTimeout(safetyTimeout);
       placeImages();
-    }, MAX_LOAD_TIME * 2); // Double du temps max par image
+    }, GLOBAL_TIMEOUT);
     
     shuffledImages.forEach(({ path, project }) => {
       const img = new Image();
@@ -757,11 +791,25 @@ function generateImageCarousel() {
           checkAllImagesProcessed();
         }
       }, MAX_LOAD_TIME);
+      allTimeouts.push(imageTimeout);
       
       img.onload = function() {
         if (imageProcessed) return; // Éviter les doubles appels
         imageProcessed = true;
         clearTimeout(imageTimeout);
+        // Retirer de la liste des timeouts
+        const index = allTimeouts.indexOf(imageTimeout);
+        if (index > -1) {
+          allTimeouts.splice(index, 1);
+        }
+        
+        // Vérifier que l'image a bien des dimensions valides
+        if (img.naturalWidth === 0 || img.naturalHeight === 0) {
+          failedImages++;
+          console.warn(`Image invalide (dimensions nulles): ${path}`);
+          checkAllImagesProcessed();
+          return;
+        }
         
         const originalAspectRatio = img.naturalWidth / img.naturalHeight;
         const isLandscape = originalAspectRatio >= 1;
@@ -792,12 +840,18 @@ function generateImageCarousel() {
         if (imageProcessed) return; // Éviter les doubles appels
         imageProcessed = true;
         clearTimeout(imageTimeout);
+        // Retirer de la liste des timeouts
+        const index = allTimeouts.indexOf(imageTimeout);
+        if (index > -1) {
+          allTimeouts.splice(index, 1);
+        }
         
         failedImages++;
         console.warn(`Erreur de chargement pour l'image: ${path}`);
         checkAllImagesProcessed();
       };
       
+      // Définir src après avoir configuré les handlers
       img.src = path;
     });
     
@@ -812,6 +866,8 @@ function generateImageCarousel() {
           imageCarousel.remove();
           imageCarousel = null;
         }
+        // Nettoyer le timeout de sécurité
+        clearTimeout(safetyTimeout);
         return;
       }
       
@@ -831,6 +887,8 @@ function generateImageCarousel() {
           imageCarousel.remove();
           imageCarousel = null;
         }
+        // Nettoyer le timeout de sécurité
+        clearTimeout(safetyTimeout);
         return;
       }
       
@@ -1034,11 +1092,13 @@ function generateImageCarousel() {
       
       imageCarousel.appendChild(container);
       
-      // Masquer l'indicateur de chargement
+      // Masquer l'indicateur de chargement (s'assurer qu'il est bien masqué)
       const loadingIndicator = document.getElementById('loading-indicator');
       if (loadingIndicator) {
         loadingIndicator.remove();
       }
+      // Nettoyer le timeout de sécurité au cas où
+      clearTimeout(safetyTimeout);
       
       // Si un projet est sélectionné ou si on est en mode détail, masquer le carrousel
       if (currentProjectIndex !== -1 || isDetailMode) {
