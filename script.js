@@ -722,12 +722,47 @@ function generateImageCarousel() {
     container.style.overflow = 'visible';
     
     let loadedImages = 0;
+    let failedImages = 0;
     const imageData = [];
+    const MAX_LOAD_TIME = 10000; // 10 secondes maximum par image
+    let loadTimeout = null;
+    
+    // Fonction pour vérifier si toutes les images ont été traitées (chargées ou échouées)
+    function checkAllImagesProcessed() {
+      if (loadedImages + failedImages === shuffledImages.length) {
+        if (loadTimeout) {
+          clearTimeout(loadTimeout);
+          loadTimeout = null;
+        }
+        placeImages();
+      }
+    }
+    
+    // Timeout global pour éviter une attente infinie
+    loadTimeout = setTimeout(() => {
+      console.warn('Timeout lors du chargement des images. Affichage des images chargées.');
+      placeImages();
+    }, MAX_LOAD_TIME * 2); // Double du temps max par image
     
     shuffledImages.forEach(({ path, project }) => {
       const img = new Image();
-      img.src = path;
+      let imageProcessed = false;
+      
+      // Timeout individuel pour chaque image
+      const imageTimeout = setTimeout(() => {
+        if (!imageProcessed) {
+          imageProcessed = true;
+          failedImages++;
+          console.warn(`Timeout pour l'image: ${path}`);
+          checkAllImagesProcessed();
+        }
+      }, MAX_LOAD_TIME);
+      
       img.onload = function() {
+        if (imageProcessed) return; // Éviter les doubles appels
+        imageProcessed = true;
+        clearTimeout(imageTimeout);
+        
         const originalAspectRatio = img.naturalWidth / img.naturalHeight;
         const isLandscape = originalAspectRatio >= 1;
         const normalizedAspectRatio = isLandscape ? 16/9 : 9/16;
@@ -750,19 +785,54 @@ function generateImageCarousel() {
         });
         
         loadedImages++;
-        
-        if (loadedImages === shuffledImages.length) {
-          placeImages();
-        }
+        checkAllImagesProcessed();
       };
+      
+      img.onerror = function() {
+        if (imageProcessed) return; // Éviter les doubles appels
+        imageProcessed = true;
+        clearTimeout(imageTimeout);
+        
+        failedImages++;
+        console.warn(`Erreur de chargement pour l'image: ${path}`);
+        checkAllImagesProcessed();
+      };
+      
+      img.src = path;
     });
     
     function placeImages() {
+      // Si aucune image n'a été chargée, masquer l'indicateur et retourner
+      if (imageData.length === 0) {
+        const loadingIndicator = document.getElementById('loading-indicator');
+        if (loadingIndicator) {
+          loadingIndicator.remove();
+        }
+        if (imageCarousel) {
+          imageCarousel.remove();
+          imageCarousel = null;
+        }
+        return;
+      }
+      
       const totalArea = availableWidth * availableHeight;
       let totalImageArea = 0;
       imageData.forEach(img => {
         totalImageArea += img.width * img.height;
       });
+      
+      // Éviter la division par zéro
+      if (totalImageArea === 0) {
+        const loadingIndicator = document.getElementById('loading-indicator');
+        if (loadingIndicator) {
+          loadingIndicator.remove();
+        }
+        if (imageCarousel) {
+          imageCarousel.remove();
+          imageCarousel = null;
+        }
+        return;
+      }
       
       const scaleFactor = Math.sqrt(totalArea * 0.75 / totalImageArea);
       imageData.forEach(img => {
