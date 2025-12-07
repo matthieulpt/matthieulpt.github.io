@@ -2,9 +2,9 @@
   "projects": [
     {
       "id": "p1",
-      "title": "Dali - Radio France",
+      "title": "Jeunesainte - Place des Vosges",
       "category": "photo",
-      "description": "Prise de vue en live de l'artiste Dali à radio france.",
+      "description": "Prise de vue en live de la préstation de l'artiste Jeunesainte durant la fête de la musique et shooting d'après performance.",
       "images": [
         "https://cdn.discordapp.com/attachments/1121559208404463708/1447007488871235735/Shoot-Jeunesaint-01.jpg?ex=69360e3d&is=6934bcbd&hm=a8da8b04ce6d042f0042bf30185bc7def84a72194336ca0baeeee0549aba09f4&",
         "https://cdn.discordapp.com/attachments/1121559208404463708/1447013575922159637/Shoot-Jeunesaint-02.jpg?ex=693613e8&is=6934c268&hm=6a9a9615148093077f6db0297de53f25bd207ade1700d37f261a28640bc25b66&",
@@ -28,12 +28,23 @@
     },
     {
       "id": "p2",
-      "title": "Identité visuelle",
-      "category": "graphic",
-      "description": "Construction d'une identité de marque complète : logo, palette chromatique, typographies et guidelines. Le projet met l'accent sur la cohérence entre supports imprimés et digitaux.",
+      "title": "Kam Hugh - Chez Mylène",
+      "category": "photo",
+      "description": "Captation photo de la prestation de l'artiste Kam Hugh pour le bar Chez Mylène à l'occasion de la viewing party de la final de Dragrace France.",
       "images": [
-        "images_test/image_test3.jpg.webp",
-        "images_test/image_test4.jpeg"
+        "https://cdn.discordapp.com/attachments/1447014389566935090/1447014441777631273/Shoot-Kam-01.jpg?ex=693614b7&is=6934c337&hm=e8e8f9b5e8066b5bfae5933f077c26e9eaec0af34a483830fe23e9073a674903&",
+        "https://cdn.discordapp.com/attachments/1447014389566935090/1447014442113171516/Shoot-Kam-02.jpg?ex=693614b7&is=6934c337&hm=b906179b796c582bec0154880411bdf2f384e6895a9585a6cb5298e9feffe68a&",
+        "https://cdn.discordapp.com/attachments/1447014389566935090/1447014442658304140/Shoot-Kam-03.jpg?ex=693614b7&is=6934c337&hm=80d187ebdcf611b4aebc00edde75841470d2e87153103e18cc807b2076907608&",
+        "https://cdn.discordapp.com/attachments/1447014389566935090/1447014443140518078/Shoot-Kam-04.jpg?ex=693614b7&is=6934c337&hm=ca30a17fc644cf7fb68d1a2542d163fb06b8a7704c05bf4f23fb78982d4b220d&",
+        "https://cdn.discordapp.com/attachments/1447014389566935090/1447014443497029793/Shoot-Kam-05.jpg?ex=693614b7&is=6934c337&hm=10b8e6e3a49f8385a3471bdb69fd502ead271598b71387469749755a5955cf31&",
+        "https://cdn.discordapp.com/attachments/1447014389566935090/1447014444323438612/Shoot-Kam-06.jpg?ex=693614b7&is=6934c337&hm=7b78873095fb62d630e3bc2c488e03a9ee644454e5f679888ed7131e88c12b0b&",
+        "https://cdn.discordapp.com/attachments/1447014389566935090/1447014444751130705/Shoot-Kam-07.jpg?ex=693614b7&is=6934c337&hm=f2d536e32bdf2a8cf4a2807c4a605019bfd4114c86268c46aad58f2b2059824d&",
+        "https://cdn.discordapp.com/attachments/1447014389566935090/1447014445095321855/Shoot-Kam-08.jpg?ex=693614b7&is=6934c337&hm=df934334ada037008e06a74092326e1ee63b5f5d3d2b439619a2d5005900635f&",
+        "https://cdn.discordapp.com/attachments/1447014389566935090/1447014445472681994/Shoot-Kam-09.jpg?ex=693614b8&is=6934c338&hm=75582ca70320691fc5b72bb0f8a92d415c308b0e505685d3dfdd6e3be434e753&",
+        "https://cdn.discordapp.com/attachments/1447014389566935090/1447014445837451325/Shoot-Kam-10.jpg?ex=693614b8&is=6934c338&hm=7e2110d68203a9f42a7dc7880a83cdc26b7515523262c04e05761e1775a14f47&",
+        "https://cdn.discordapp.com/attachments/1447014389566935090/1447014451948814386/Shoot-Kam-11.jpg?ex=693614b9&is=6934c339&hm=f7fd0417753966e7a146459d049c935a3b750a463b6b36af9ab5b74dc4decbe4&",
+        "https://cdn.discordapp.com/attachments/1447014389566935090/1447014452649000970/Shoot-Kam-12.jpg?ex=693614b9&is=6934c339&hm=5a761f232bd856b08c7e1114506edb18ad6fa6a4667418235c934e42057ca9bb&",
+        "https://cdn.discordapp.com/attachments/1447014389566935090/1447014453060308992/Shoot-Kam-13.jpg?ex=693614b9&is=6934c339&hm=f74463ed1164560ae61a83c60a5eb24a3a141b437650983b8454e865c606f777&"
       ]
     },
     {
