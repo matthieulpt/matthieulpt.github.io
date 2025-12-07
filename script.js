@@ -19,6 +19,7 @@ const projectDetail = document.getElementById('project-detail');
 const filterButtons = document.getElementById('filter-buttons');
 const backToListButton = document.getElementById('back-to-list');
 const detailTitle = document.getElementById('detail-title');
+const detailLink = document.getElementById('detail-link');
 const detailDescription = document.getElementById('detail-description');
 const projectsHeading = document.getElementById('projects-heading');
 const mainContent = document.querySelector('main');
@@ -272,6 +273,14 @@ function enterDetailMode(project) {
   detailDescription.textContent = description;
   detailDescription.classList.toggle('hidden', !description.trim());
   
+  // Afficher/masquer le bouton "Accéder au projet" selon la présence d'un lien
+  if (detailLink && projectData && projectData.link && projectData.link.trim() !== '') {
+    detailLink.href = projectData.link;
+    detailLink.classList.remove('hidden');
+  } else if (detailLink) {
+    detailLink.classList.add('hidden');
+  }
+  
   // Ajouter les images pour mobile (en dessous de la description)
   const detailImagesContainer = document.getElementById('detail-images-mobile');
   if (detailImagesContainer && projectData && projectData.images) {
@@ -496,6 +505,10 @@ function exitDetailMode(skipShowBlank = false) {
   
   detailTitle.textContent = '';
   detailDescription.textContent = '';
+  if (detailLink) {
+    detailLink.href = '#';
+    detailLink.classList.add('hidden');
+  }
   
   // Nettoyer les images mobiles
   const detailImagesContainer = document.getElementById('detail-images-mobile');
