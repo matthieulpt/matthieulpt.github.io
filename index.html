@@ -443,6 +443,24 @@
         -ms-overflow-style: none; /* IE et Edge */
         scrollbar-width: none; /* Firefox */
       }
+      /* Protection contre le téléchargement des images */
+      img {
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-drag: none;
+        -khtml-user-drag: none;
+        -moz-user-drag: none;
+        -o-user-drag: none;
+        pointer-events: auto;
+      }
+      img::selection {
+        background: transparent;
+      }
+      img::-moz-selection {
+        background: transparent;
+      }
     </style>
     <script src="https://cdn.tailwindcss.com"></script>
   </head>

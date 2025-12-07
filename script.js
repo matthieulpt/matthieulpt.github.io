@@ -166,6 +166,22 @@ function createMediaElement(mediaPath, altText, className = '', isCarousel = fal
     if (!isCarousel) {
       img.loading = 'lazy';
     }
+    
+    // Protection contre le téléchargement
+    img.draggable = false;
+    img.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      return false;
+    });
+    img.addEventListener('dragstart', (e) => {
+      e.preventDefault();
+      return false;
+    });
+    img.addEventListener('selectstart', (e) => {
+      e.preventDefault();
+      return false;
+    });
+    
     return img;
   }
 }
@@ -1188,6 +1204,22 @@ function generateImageCarousel() {
           img.alt = `${imageItem.project.title} - Image`;
           img.className = 'w-full h-full object-cover';
           img.style.display = 'block';
+          img.draggable = false;
+          
+          // Protection contre le téléchargement
+          img.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            return false;
+          });
+          img.addEventListener('dragstart', (e) => {
+            e.preventDefault();
+            return false;
+          });
+          img.addEventListener('selectstart', (e) => {
+            e.preventDefault();
+            return false;
+          });
+          
           mediaElement = img;
         }
         
