@@ -21,6 +21,7 @@ const backToListButton = document.getElementById('back-to-list');
 const detailTitle = document.getElementById('detail-title');
 const detailLink = document.getElementById('detail-link');
 const detailDescription = document.getElementById('detail-description');
+const detailDate = document.getElementById('detail-date');
 const projectsHeading = document.getElementById('projects-heading');
 const mainContent = document.querySelector('main');
 const aboutView = document.getElementById('about-view');
@@ -99,6 +100,74 @@ function shuffleArray(array) {
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
   return shuffled;
+}
+
+// Fonction pour extraire l'ID d'une vidéo YouTube depuis une URL
+function getYouTubeVideoId(url) {
+  if (!url) return null;
+  
+  // Formats supportés :
+  // https://www.youtube.com/watch?v=VIDEO_ID
+  // https://youtu.be/VIDEO_ID
+  // https://www.youtube.com/embed/VIDEO_ID
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+    /youtube\.com\/.*[?&]v=([^&\n?#]+)/
+  ];
+  
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match && match[1]) {
+      return match[1];
+    }
+  }
+  
+  return null;
+}
+
+// Fonction pour créer un élément média (image ou vidéo YouTube)
+function createMediaElement(mediaPath, altText, className = '', isCarousel = false) {
+  const videoId = getYouTubeVideoId(mediaPath);
+  
+  if (videoId) {
+    // C'est une vidéo YouTube, créer un iframe
+    const wrapper = document.createElement('div');
+    wrapper.className = className || 'w-full';
+    wrapper.style.position = 'relative';
+    wrapper.style.paddingBottom = '56.25%'; // 16:9 aspect ratio
+    wrapper.style.height = '0';
+    wrapper.style.overflow = 'hidden';
+    
+    const iframe = document.createElement('iframe');
+    // Autoplay avec son en mode détail, sans son dans le carrousel
+    if (isCarousel) {
+      iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`;
+    } else {
+      iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    }
+    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+    iframe.allowFullscreen = true;
+    iframe.style.position = 'absolute';
+    iframe.style.top = '0';
+    iframe.style.left = '0';
+    iframe.style.width = '100%';
+    iframe.style.height = '100%';
+    iframe.style.border = 'none';
+    iframe.className = 'w-full h-full';
+    
+    wrapper.appendChild(iframe);
+    return wrapper;
+  } else {
+    // C'est une image normale
+    const img = document.createElement('img');
+    img.src = mediaPath;
+    img.alt = altText || '';
+    img.className = className || 'w-full h-auto object-contain';
+    if (!isCarousel) {
+      img.loading = 'lazy';
+    }
+    return img;
+  }
 }
 
 // ============================================================================
@@ -273,6 +342,14 @@ function enterDetailMode(project) {
   detailDescription.textContent = description;
   detailDescription.classList.toggle('hidden', !description.trim());
   
+  // Afficher/masquer la date selon sa présence
+  if (detailDate && projectData && projectData.date && projectData.date.trim() !== '') {
+    detailDate.textContent = `- ${projectData.date}`;
+    detailDate.classList.remove('hidden');
+  } else if (detailDate) {
+    detailDate.classList.add('hidden');
+  }
+  
   // Afficher/masquer le bouton "Accéder au projet" selon la présence d'un lien
   if (detailLink && projectData && projectData.link && projectData.link.trim() !== '') {
     detailLink.href = projectData.link;
@@ -292,12 +369,8 @@ function enterDetailMode(project) {
     const container = document.createElement('div');
     container.className = 'grid grid-cols-1 sm:grid-cols-2 gap-4';
     projectData.images.forEach((imagePath, index) => {
-      const img = document.createElement('img');
-      img.src = imagePath;
-      img.alt = `${title} - Image ${index + 1}`;
-      img.className = 'w-full h-auto object-contain';
-      img.loading = 'lazy';
-      container.appendChild(img);
+      const mediaElement = createMediaElement(imagePath, `${title} - Image ${index + 1}`, 'w-full h-auto object-contain');
+      container.appendChild(mediaElement);
     });
     detailImagesContainer.appendChild(container);
   }
@@ -320,12 +393,8 @@ function enterDetailMode(project) {
     container.className = 'grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl';
     
     projectData.images.forEach((imagePath, index) => {
-      const img = document.createElement('img');
-      img.src = imagePath;
-      img.alt = `${title} - Image ${index + 1}`;
-      img.className = 'w-full h-auto object-contain shadow-lg';
-      img.loading = 'lazy';
-      container.appendChild(img);
+      const mediaElement = createMediaElement(imagePath, `${title} - Image ${index + 1}`, 'w-full h-auto object-contain shadow-lg');
+      container.appendChild(mediaElement);
     });
     
     detailImagesDesktop.appendChild(container);
@@ -505,6 +574,10 @@ function exitDetailMode(skipShowBlank = false) {
   
   detailTitle.textContent = '';
   detailDescription.textContent = '';
+  if (detailDate) {
+    detailDate.textContent = '';
+    detailDate.classList.add('hidden');
+  }
   if (detailLink) {
     detailLink.href = '#';
     detailLink.classList.add('hidden');
@@ -652,12 +725,8 @@ function generatePreviews() {
     container.className = `w-full max-w-5xl ${gridClass}`;
     
     project.images.forEach((imagePath, index) => {
-      const img = document.createElement('img');
-      img.src = imagePath;
-      img.alt = `${project.title} - Image ${index + 1}`;
-      img.className = 'w-full h-auto object-contain shadow-lg';
-      img.loading = 'lazy';
-      container.appendChild(img);
+      const mediaElement = createMediaElement(imagePath, `${project.title} - Image ${index + 1}`, 'w-full h-auto object-contain shadow-lg');
+      container.appendChild(mediaElement);
     });
     
     previewDiv.appendChild(container);
@@ -793,6 +862,29 @@ function generateImageCarousel() {
     }, GLOBAL_TIMEOUT);
     
     shuffledImages.forEach(({ path, project }) => {
+      const videoId = getYouTubeVideoId(path);
+      
+      // Si c'est une vidéo YouTube, utiliser des dimensions par défaut (16:9)
+      if (videoId) {
+        const normalizedAspectRatio = 16/9;
+        let imgWidth = imageBaseWidth * (1.1 + Math.random() * 0.3);
+        const imgHeight = imgWidth / normalizedAspectRatio;
+        
+        imageData.push({
+          path: path,
+          project: project,
+          width: imgWidth,
+          height: imgHeight,
+          aspectRatio: normalizedAspectRatio,
+          isVideo: true
+        });
+        
+        loadedImages++;
+        checkAllImagesProcessed();
+        return;
+      }
+      
+      // Sinon, charger l'image normalement
       const img = new Image();
       let imageProcessed = false;
       
@@ -843,7 +935,8 @@ function generateImageCarousel() {
           project: project,
           width: imgWidth,
           height: imgHeight,
-          aspectRatio: normalizedAspectRatio
+          aspectRatio: normalizedAspectRatio,
+          isVideo: false
         });
         
         loadedImages++;
@@ -1062,11 +1155,41 @@ function generateImageCarousel() {
         // Stocker la rotation pour l'utiliser dans les event listeners
         imgWrapper.dataset.rotation = rotation;
         
-        const img = document.createElement('img');
-        img.src = imageItem.path;
-        img.alt = `${imageItem.project.title} - Image`;
-        img.className = 'w-full h-full object-cover';
-        img.style.display = 'block';
+        // Créer l'élément média (image ou vidéo YouTube)
+        let mediaElement;
+        if (imageItem.isVideo) {
+          // Pour les vidéos YouTube, créer un wrapper spécial
+          const videoWrapper = document.createElement('div');
+          videoWrapper.style.width = '100%';
+          videoWrapper.style.height = '100%';
+          videoWrapper.style.position = 'relative';
+          videoWrapper.style.overflow = 'hidden';
+          
+          const iframe = document.createElement('iframe');
+          const videoId = getYouTubeVideoId(imageItem.path);
+          // Dans le carrousel : autoplay muet avec loop
+          iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`;
+          iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+          iframe.allowFullscreen = true;
+          iframe.style.width = '100%';
+          iframe.style.height = '100%';
+          iframe.style.border = 'none';
+          iframe.style.position = 'absolute';
+          iframe.style.top = '0';
+          iframe.style.left = '0';
+          // Désactiver les interactions avec l'iframe pour que les clics passent au wrapper
+          iframe.style.pointerEvents = 'none';
+          
+          videoWrapper.appendChild(iframe);
+          mediaElement = videoWrapper;
+        } else {
+          const img = document.createElement('img');
+          img.src = imageItem.path;
+          img.alt = `${imageItem.project.title} - Image`;
+          img.className = 'w-full h-full object-cover';
+          img.style.display = 'block';
+          mediaElement = img;
+        }
         
         // Effet hover : zoom et passage au premier plan (pas de transparence)
         imgWrapper.addEventListener('mouseenter', () => {
@@ -1093,7 +1216,7 @@ function generateImageCarousel() {
           }
         });
         
-        imgWrapper.appendChild(img);
+        imgWrapper.appendChild(mediaElement);
         container.appendChild(imgWrapper);
         
         // Animation d'apparition avec délai progressif pour effet de cascade

@@ -5,6 +5,7 @@
       "title": "Jeunesainte - Place des Vosges",
       "category": "photo",
       "description": "Prise de vue en live de la préstation de l'artiste Jeunesainte durant la fête de la musique et shooting d'après performance.",
+      "date": "2024",
       "link": "https://www.instagram.com/p/DLkmFuooKTE/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
       "images": [
         "https://cdn.discordapp.com/attachments/1121559208404463708/1447007488871235735/Shoot-Jeunesaint-01.jpg?ex=69360e3d&is=6934bcbd&hm=a8da8b04ce6d042f0042bf30185bc7def84a72194336ca0baeeee0549aba09f4&",
@@ -32,6 +33,7 @@
       "title": "Kam Hugh - Chez Mylène",
       "category": "photo",
       "description": "Captation photo de la prestation de l'artiste Kam Hugh pour le bar Chez Mylène à l'occasion de la viewing party de la final de Dragrace France.",
+      "date": "",
       "link": "https://www.instagram.com/p/DOBloUVjJlq/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
       "images": [
         "https://cdn.discordapp.com/attachments/1447014389566935090/1447014441777631273/Shoot-Kam-01.jpg?ex=693614b7&is=6934c337&hm=e8e8f9b5e8066b5bfae5933f077c26e9eaec0af34a483830fe23e9073a674903&",
@@ -54,6 +56,7 @@
       "title": "Frip'Havraise - RTZ PARTY",
       "category": "graphic",
       "description": "Conception graphique pour la promotion d'un DJ set techno. Post sur les réseaux sociaux et poster.",
+      "date": "",
       "link": "https://www.instagram.com/p/DP6mTBwDFVm/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
       "images": [
         "https://cdn.discordapp.com/attachments/1447018937031200849/1447019110696489093/RTZ_PARTY-02.jpg?ex=69361910&is=6934c790&hm=3c85ed41bf08117df52421ca1cf044754fb2fe4997b20a3aa7252c0a7b5750d5&",
@@ -65,6 +68,7 @@
       "title": "EMH - Cannes",
       "category": "photo",
       "description": "Shooting photo pour la création d'une cover d'album pour le single 'Sablier'",
+      "date": "",
       "link": "https://www.instagram.com/p/DNI-cWboLaW/?img_index=3",
       "images": [
         "https://cdn.discordapp.com/attachments/1447021755162955897/1447022470908608684/Shoot-EMH-03.jpg?ex=69361c31&is=6934cab1&hm=c98cb0922cf38854ef77e8a48f69c5755e386d0523d7a269c30948c2c5b572ad&",
@@ -79,6 +83,7 @@
       "title": "Abysse Media - Pura Pura - Canal Barboteur",
       "category": "photo",
       "description": "Variation d'affiche sur la même identité visuelle, travail sur la série et le rythme typographique.",
+      "date": "",
       "link": "https://www.instagram.com/p/DOLQf56CI3R/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
       "images": [
         "images_test/image_test9.JPG",
@@ -87,216 +92,33 @@
     },
     {
       "id": "p6",
-      "title": "Série d'affiches",
+      "title": "Tianmi - Nouveau Casino",
       "category": "photo",
-      "description": "Série d'affiches thématiques déclinées pour une campagne d'exposition.",
+      "description": "Prise de vue en live de la préstation de l'artiste Tianmi pendant son concert au Nouveau Casino.",
+      "date": "",
       "link": "",
       "images": [
-        "images_test/image_test11.jpg.png",
-        "images_test/image_test12.jpeg"
+        "https://cdn.discordapp.com/attachments/1447028488899924191/1447028610765553775/Shoot-Tianmi-01.jpg?ex=693621e9&is=6934d069&hm=03bd59830348fb3150d49fce4c0d9c81f3226a8be439abd67baf0e180103ab1b&",
+        "https://cdn.discordapp.com/attachments/1447028488899924191/1447028612623765628/Shoot-Tianmi-07.jpg?ex=693621e9&is=6934d069&hm=0bc85ea43be3c4233cd08693eb25d28452d852f050b215cd5f301b12acc0db5c&",
+        "https://cdn.discordapp.com/attachments/1447028488899924191/1447028611243708446/Shoot-Tianmi-02.jpg?ex=693621e9&is=6934d069&hm=dc38060f4192446271d499df88acfe6a48d6b3c7f090f6d1fd4a89c4e143c4b3&",
+        "https://cdn.discordapp.com/attachments/1447028488899924191/1447028613705896048/Shoot-Tianmi-09.jpg?ex=693621e9&is=6934d069&hm=a56b2447a0fe92a03eb7d07130dfae967e677023a1c219b474a1aac41e74dfa2&",
+        "https://cdn.discordapp.com/attachments/1447028488899924191/1447028640243253390/Shoot-Tianmi-17.jpg?ex=693621f0&is=6934d070&hm=ca5c13dacb43aac4f55b651c5be3f347d178968524e6516c6d49c33f03b5ef79&",
+        "https://cdn.discordapp.com/attachments/1447028488899924191/1447028647604256913/Shoot-Tianmi-21.jpg?ex=693621f2&is=6934d072&hm=89843a35a98c70b46e4544503ec2c2da57d914c94c615a6a269cf450783944c4&",
+        "https://cdn.discordapp.com/attachments/1447028488899924191/1447028648715747399/Shoot-Tianmi-24.jpg?ex=693621f2&is=6934d072&hm=a75b6fba6df7e86fad1f19e102f03b976b20a98e13a5d6ec5bef595739668da9&",
+        "https://cdn.discordapp.com/attachments/1447028488899924191/1447028649718190131/Shoot-Tianmi-26.jpg?ex=693621f2&is=6934d072&hm=85531498bcfb82df49ff71e0a56e406438a82c7bb0c6478dacba77f8feed315e&",
+        "https://cdn.discordapp.com/attachments/1447028488899924191/1447028639366647898/Shoot-Tianmi-15.jpg?ex=693621f0&is=6934d070&hm=826a981dc372527b62acff3660778320e705a42a8be4dd45f9734e3f37b63157&"
       ]
     },
     {
       "id": "p7",
-      "title": "Packaging",
+      "title": "Maison Des Lycéens - Jaudré Rudel - Blaye",
       "category": "video",
-      "description": "Packaging pour un produit culturel, travail sur le volume et la lisibilité en rayon.",
+      "description": "Reportage vidéo retraçant le bal de fin d'année: captation en amont, pendant et après l'événement, montage et mise en récit.",
+      "date": "",
       "link": "",
       "images": [
-        "images_test/image_test13.jpg",
-        "images_test/image_test14.jpg"
-      ]
-    },
-    {
-      "id": "p8",
-      "title": "Édition",
-      "category": "graphic",
-      "description": "Mise en page éditoriale : couverture, sommaire et doubles pages pour une revue.",
-      "link": "",
-      "images": [
-        "images_test/image_test15.jpg",
-        "images_test/image_test16.jpg"
-      ]
-    },
-    {
-      "id": "p9",
-      "title": "Affiche événementielle",
-      "category": "photo",
-      "description": "Affiche pour un concert, travail sur la hiérarchie des informations et l'impact visuel.",
-      "link": "",
-      "images": [
-        "images_test/image_test17.jpg",
-        "images_test/image_test18.jpg"
-      ]
-    },
-    {
-      "id": "p10",
-      "title": "Identité de festival",
-      "category": "photo",
-      "description": "Identité visuelle complète pour un festival : logo, affiches et supports digitaux.",
-      "link": "",
-      "images": [
-        "images_test/image_test19.jpg",
-        "images_test/image_test20.jpg"
-      ]
-    },
-    {
-      "id": "p11",
-      "title": "Affiche typographique",
-      "category": "photo",
-      "description": "Exploration typographique pure, composition et contraste de formes.",
-      "link": "",
-      "images": [
-        "images_test/image_test21.jpg",
-        "images_test/image_test22.jpeg"
-      ]
-    },
-    {
-      "id": "p12",
-      "title": "Affiche minimaliste",
-      "category": "video",
-      "description": "Affiche construite autour d'une mise en page très épurée et d'une palette réduite.",
-      "link": "",
-      "images": [
-        "images_test/image_test23.jpeg",
-        "images_test/image_test24.jpg"
-      ]
-    },
-    {
-      "id": "p13",
-      "title": "Affiche expérimentale",
-      "category": "video",
-      "description": "Affiche expérimentale mêlant textures, photos et typographies déformées.",
-      "link": "",
-      "images": [
-        "images_test/image_test25.jpg",
-        "images_test/image_test26.jpeg"
-      ]
-    },
-    {
-      "id": "p14",
-      "title": "Série Instagram",
-      "category": "graphic",
-      "description": "Série de visuels adaptés aux formats réseaux sociaux pour une communication cohérente.",
-      "link": "",
-      "images": [
-        "images_test/image_test27.jpg",
-        "images_test/image_test28.jpg"
-      ]
-    },
-    {
-      "id": "p15",
-      "title": "Portrait série",
-      "category": "photo",
-      "description": "Série de portraits en noir et blanc explorant les expressions et les émotions.",
-      "link": "",
-      "images": [
-        "images_test/image_test29.jpg",
-        "images_test/image_test30.jpg"
-      ]
-    },
-    {
-      "id": "p16",
-      "title": "Court métrage",
-      "category": "video",
-      "description": "Court métrage documentaire sur le quotidien urbain, montage et post-production.",
-      "link": "",
-      "images": [
-        "images_test/image_test31.jpeg",
-        "images_test/image_test32.jpg"
-      ]
-    },
-    {
-      "id": "p17",
-      "title": "Catalogue produit",
-      "category": "graphic",
-      "description": "Catalogue produit avec mise en page soignée et photographies de produits.",
-      "link": "",
-      "images": [
-        "images_test/image_test33.jpg",
-        "images_test/image_test34.jpg"
-      ]
-    },
-    {
-      "id": "p18",
-      "title": "Paysage urbain",
-      "category": "photo",
-      "description": "Série photographique sur l'architecture moderne et les espaces urbains.",
-      "link": "",
-      "images": [
-        "images_test/image_test35.jpg",
-        "images_test/image_test36.jpeg"
-      ]
-    },
-    {
-      "id": "p19",
-      "title": "Clip musical",
-      "category": "video",
-      "description": "Clip vidéo pour un artiste indépendant, direction artistique et réalisation.",
-      "link": "",
-      "images": [
-        "images_test/image_test37.jpeg",
-        "images_test/image_test38.jpeg"
-      ]
-    },
-    {
-      "id": "p20",
-      "title": "Signalétique",
-      "category": "graphic",
-      "description": "Conception de signalétique pour un espace d'exposition, orientation et navigation.",
-      "link": "",
-      "images": [
-        "images_test/image_test39.jpeg",
-        "images_test/image_test40.jpeg"
-      ]
-    },
-    {
-      "id": "p21",
-      "title": "Nature morte",
-      "category": "photo",
-      "description": "Série de natures mortes avec éclairage contrôlé et composition minimaliste.",
-      "link": "",
-      "images": [
-        "images_test/image_test41.jpeg",
-        "images_test/image_test42.jpeg"
-      ]
-    },
-    {
-      "id": "p22",
-      "title": "Publicité",
-      "category": "video",
-      "description": "Spot publicitaire pour une marque, storyboard et post-production.",
-      "link": "",
-      "images": [
-        "images_test/image_test43.jpeg",
-        "images_test/image_test44.jpg.webp",
-        "images_test/image_test45.jpg.webp"
-      ]
-    },
-    {
-      "id": "p23",
-      "title": "Carte de visite",
-      "category": "graphic",
-      "description": "Design de cartes de visite avec finitions premium et impression sérigraphie.",
-      "link": "",
-      "images": [
-        "images_test/image_test46.jpg.webp",
-        "images_test/image_test47.jpeg",
-        "images_test/image_test48.jpg"
-      ]
-    },
-    {
-      "id": "p24",
-      "title": "Reportage événement",
-      "category": "photo",
-      "description": "Couverture photographique d'un événement culturel, captation des moments clés.",
-      "link": "",
-      "images": [
-        "images_test/image_test49.jpg",
-        "images_test/image_test50.jpg",
-        "images_test/image_test51.jpeg"
+        "https://youtu.be/NP9xvqj5gzo"
       ]
     }
   ]
 }
-
