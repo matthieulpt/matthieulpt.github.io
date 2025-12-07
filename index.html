@@ -433,6 +433,16 @@
       .preview-content {
         position: relative;
       }
+      /* Masquer complètement la barre de scroll pour la liste des projets */
+      aside::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+      }
+      aside {
+        -ms-overflow-style: none; /* IE et Edge */
+        scrollbar-width: none; /* Firefox */
+      }
     </style>
     <script src="https://cdn.tailwindcss.com"></script>
   </head>

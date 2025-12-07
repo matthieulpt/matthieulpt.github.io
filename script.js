@@ -683,11 +683,12 @@ function generateImageCarousel() {
   `;
   mainContent.appendChild(loadingIndicator);
   
-  // Obtenir toutes les images selon le filtre
+  // Obtenir les deux premières images de chaque projet selon le filtre
   let imagesToShow = [];
   projectsData.forEach(project => {
     if (!activeFilter || project.category === activeFilter) {
-      project.images.forEach(imagePath => {
+      // Prendre seulement les deux premières images de chaque projet
+      project.images.slice(0, 2).forEach(imagePath => {
         imagesToShow.push({ path: imagePath, project: project });
       });
     }
