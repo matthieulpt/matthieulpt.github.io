@@ -470,7 +470,7 @@ function showAboutView() {
     
     // Définir le titre et la description
     detailTitle.textContent = 'À propos';
-    detailDescription.textContent = 'Description à personnaliser. Vous pouvez ajouter ici une présentation de votre travail, votre parcours, ou toute autre information pertinente.';
+    detailDescription.textContent = 'Description à rédiger.';
     detailDescription.classList.remove('hidden');
     
     // Masquer les images mobiles (pas d'images pour "À propos")
@@ -512,7 +512,7 @@ function showAboutView() {
     
     // Définir le titre et la description
     aboutTitle.textContent = 'À propos';
-    aboutDescription.textContent = 'Description à personnaliser. Vous pouvez ajouter ici une présentation de votre travail, votre parcours, ou toute autre information pertinente.';
+    aboutDescription.textContent = 'Description à rédiger.';
     
     // Afficher la vue
     aboutView.classList.remove('hidden');
