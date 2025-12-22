@@ -143,7 +143,7 @@ function createMediaElement(mediaPath, altText, className = '', isCarousel = fal
     if (isCarousel) {
       iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`;
     } else {
-      iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+      iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1`;
     }
     iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
     iframe.allowFullscreen = true;
