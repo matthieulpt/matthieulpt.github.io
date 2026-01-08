@@ -470,7 +470,7 @@ function showAboutView() {
     
     // Définir le titre et la description
     detailTitle.textContent = 'À propos';
-    detailDescription.textContent = 'Description à rédiger.';
+    detailDescription.textContent = 'I’m Matthieu, a 19 years old graphic design student and professional photographer and videographer based in Paris. I am available for assignments in the Île-de-France region as well as anywhere else in France. I am currently looking for an internship in communications in Malta for the summer of 2026..';
     detailDescription.classList.remove('hidden');
     
     // Masquer les images mobiles (pas d'images pour "À propos")
@@ -512,7 +512,7 @@ function showAboutView() {
     
     // Définir le titre et la description
     aboutTitle.textContent = 'À propos';
-    aboutDescription.textContent = 'Description à rédiger.';
+    aboutDescription.textContent = 'I’m Matthieu, a 19 years old graphic design student and professional photographer and videographer based in Paris. I am available for assignments in the Île-de-France region as well as anywhere else in France. I am currently looking for an internship in communications in Malta for the summer of 2026..';
     
     // Afficher la vue
     aboutView.classList.remove('hidden');
