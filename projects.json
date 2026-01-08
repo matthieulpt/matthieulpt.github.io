@@ -102,6 +102,23 @@
         "images_test/Shoot-Luidji-15.jpg",
         "images_test/Shoot-Luidji-26.jpg"
       ]
+    },
+    {
+      "id": "p9",
+      "title": "Affiche cour",
+      "category": "graphic",
+      "description": "Live photo coverage of artist Luidji's performance during an event for the Adidas brand on Music Day.",
+      "date": "October 2024",
+      "link": "",
+      "images": [
+        "images_test/Shoot-Luidji-01.jpg",
+        "images_test/Shoot-Luidji-02.jpg",
+        "images_test/Shoot-Luidji-05.jpg",
+        "images_test/Shoot-Luidji-11.jpg",
+        "images_test/Shoot-Luidji-12.jpg",
+        "images_test/Shoot-Luidji-15.jpg",
+        "images_test/Shoot-Luidji-26.jpg"
+      ]
     }
   ]
 }
