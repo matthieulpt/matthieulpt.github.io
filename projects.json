@@ -2,7 +2,7 @@
   "projects": [
     {
       "id": "p1",
-      "title": "Jeunesainte - Place des Vosges",
+      "title": "Jeunesainte - World Music Day",
       "category": "photo",
       "description": "Live footage of artist Jeunesainte's performance during the music festival and post-performance photo shoot.",
       "date": "June 2024",
@@ -260,6 +260,69 @@
       "link": "",
       "images": [
         "https://youtu.be/-LFOnHn_LE8"
+      ]
+    },
+    {
+      "id": "p21",
+      "title": "Moji x Sboy - World Music Day",
+      "category": "photo",
+      "description": "A REMPLIR",
+      "date": "July 2025",
+      "link": "",
+      "images": [
+        "images_test/Shoot-Mojixsboy-01.jpg",
+        "images_test/Shoot-Mojixsboy-02.jpg",
+        "images_test/Shoot-Mojixsboy-13.jpg",
+        "images_test/Shoot-Mojixsboy-18.jpg",
+        "images_test/Shoot-Mojixsboy-22.jpg"
+      ]
+    },
+    {
+      "id": "p22",
+      "title": "Sinyo - La Maz",
+      "category": "photo",
+      "description": "A REMPLIR",
+      "date": "October 2025",
+      "link": "",
+      "images": [
+        "images_test/Shoot-Sinyo-01.jpg",
+        "images_test/Shoot-Sinyo-02.jpg",
+        "images_test/Shoot-Sinyo-03.jpg",
+        "images_test/Shoot-Sinyo-04.jpg",
+        "images_test/Shoot-Sinyo-05.jpg",
+        "images_test/Shoot-Sinyo-08.jpg",
+        "images_test/Shoot-Sinyo-09.jpg",
+        "images_test/Shoot-Sinyo-10.jpg"
+      ]
+    },
+    {
+      "id": "p23",
+      "title": "Soa de Muse - Chez Mylène",
+      "category": "photo",
+      "description": "A REMPLIR",
+      "date": "August 2025",
+      "link": "",
+      "images": [
+        "images_test/Shoot-Soa-01.jpg",
+        "images_test/Shoot-Soa-03.jpg",
+        "images_test/Shoot-Soa-04.jpg",
+        "images_test/Shoot-Soa-05.jpg",
+        "images_test/Shoot-Soa-07.jpg",
+        "images_test/Shoot-Soa-08.jpg"
+      ]
+    },
+    {
+      "id": "p24",
+      "title": "Mami Watta - Chez Mylène",
+      "category": "photo",
+      "description": "A REMPLIR",
+      "date": "August 2025",
+      "link": "",
+      "images": [
+        "images_test/Shoot-Mami_Watta-01.jpg",
+        "images_test/Shoot-Mami_Watta-03.jpg",
+        "images_test/Shoot-Mami_Watta-06.jpg",
+        "images_test/Shoot-Mami_Watta-08.jpg"
       ]
     }
   ]
