@@ -130,13 +130,21 @@
     },
     {
       "id": "p11",
-      "title": "Affiche Le jour de la nuit",
+      "title": "Le jour de la nuit",
       "category": "graphic",
       "description": "A REMPLIR",
       "date": "June 2025",
       "link": "",
       "images": [
-        "images_test/Affiche-Final.jpg"
+        "images_test/Affiche-Final.jpg",
+        "images_test/Charte-Application-01.jpg",
+        "images_test/Charte-Application-02.jpg",
+        "images_test/Charte-Application-03.jpg",
+        "images_test/Charte-Application-04.jpg",
+        "images_test/Charte-Application-05.jpg",
+        "images_test/Charte-Application-06.jpg",
+        "images_test/Charte-Application-07.jpg",
+        "images_test/Charte-Application-08.jpg"
       ]
     },
     {
@@ -156,7 +164,7 @@
       "title": "Arcticle Armande Barthe",
       "category": "graphic",
       "description": "A REMPLIR",
-      "date": "March 2025",
+      "date": "October 2025",
       "link": "",
       "images": [
         "images_test/Matthieu-ArmandeBarthe-G&G-01.jpg",
@@ -168,10 +176,90 @@
       "title": "Monogramme",
       "category": "graphic",
       "description": "A REMPLIR",
-      "date": "March 2025",
+      "date": "May 2025",
       "link": "",
       "images": [
         "images_test/Planche_Monogramme-ML.jpg"
+      ]
+    },
+    {
+      "id": "p15",
+      "title": "Lettre Strasbourg",
+      "category": "graphic",
+      "description": "A REMPLIR",
+      "date": "October 2024",
+      "link": "",
+      "images": [
+        "images_test/Planche-Lettre_Strasbourg-Micro.jpg"
+      ]
+    },
+    {
+      "id": "p16",
+      "title": "Mockup Projet",
+      "category": "graphic",
+      "description": "A REMPLIR",
+      "date": "September 2025",
+      "link": "",
+      "images": [
+        "images_test/Photo-Projet-01.jpg",
+        "images_test/Photo-Projet-02.jpg",
+        "images_test/Photo-Projet-03.jpg",  
+        "images_test/Photo-Projet-04.jpg",
+        "images_test/Photo-Projet-05.jpg",
+        "images_test/Photo-Projet-06.jpg",
+        "images_test/Photo-Projet-07.jpg"
+      ]
+    },
+    {
+      "id": "p17",
+      "title": "Charte Graphique Ayamaya",
+      "category": "graphic",
+      "description": "A REMPLIR",
+      "date": "March 2025",
+      "link": "",
+      "images": [
+        "images_test/Ayamaya-Charte_Graphique-01.jpg",
+        "images_test/Ayamaya-Charte_Graphique-03.jpg",
+        "images_test/Ayamaya-Charte_Graphique-05.jpg",
+        "images_test/Ayamaya-Charte_Graphique-06.jpg",
+        "images_test/Ayamaya-Charte_Graphique-07.jpg",
+        "images_test/Ayamaya-Charte_Graphique-08.jpg",
+        "images_test/Ayamaya-Charte_Graphique-09.jpg",
+        "images_test/Ayamaya-Charte_Graphique-10.jpg",
+        "images_test/Ayamaya-Charte_Graphique-11.jpg"
+      ]
+    },
+    {
+      "id": "p18",
+      "title": "Court métrage - 'Ce qui reste'",
+      "category": "video",
+      "description": "A REMPLIR",
+      "date": "December 2025",
+      "link": "",
+      "images": [
+        "https://youtu.be/HBGIw6M8IqM"
+      ]
+    },
+    {
+      "id": "p19",
+      "title": "Stop motion",
+      "category": "graphic",
+      "description": "A REMPLIR",
+      "date": "March 2025",
+      "link": "",
+      "images": [
+        "https://youtu.be/T7AvnFfPb78"
+      ]
+    },
+    {
+      "id": "p20",
+      "title": "Baignade urbaine",
+      "category": "graphic",
+      "description": "A REMPLIR",
+      "date": "October 2025",
+      "link": "",
+      "images": [
+        "https://youtu.be/-LFOnHn_LE8"
       ]
     }
   ]
