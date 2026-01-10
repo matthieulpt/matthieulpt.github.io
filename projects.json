@@ -111,9 +111,67 @@
       "date": "October 2025",
       "link": "",
       "images": [
-        "Affiche-Scan-01.jpg",
-        "Affiche-Scan-02.jpg",
-        "Affiche-Scan-03.jpg"
+        "images_test/Affiche-Scan-01.jpg",
+        "images_test/Affiche-Scan-02.jpg",
+        "images_test/Affiche-Scan-03.jpg"
+      ]
+    },
+    {
+      "id": "p10",
+      "title": "Affiche Macro 01",
+      "category": "graphic",
+      "description": "A REMPLIR",
+      "date": "October 2024",
+      "link": "",
+      "images": [
+        "images_test/Mockup-Affiche_Typo-01.jpg",
+        "images_test/Affiche-Macro_01.jpg"
+      ]
+    },
+    {
+      "id": "p11",
+      "title": "Affiche Le jour de la nuit",
+      "category": "graphic",
+      "description": "A REMPLIR",
+      "date": "June 2025",
+      "link": "",
+      "images": [
+        "images_test/Affiche-Final.jpg"
+      ]
+    },
+    {
+      "id": "p12",
+      "title": "Maquette",
+      "category": "graphic",
+      "description": "A REMPLIR",
+      "date": "October 2025",
+      "link": "",
+      "images": [
+        "images_test/Maquette-Visuel-Vertical-01.jpg",
+        "images_test/Maquette-Visuel-Vertical-02.jpg"
+      ]
+    },
+    {
+      "id": "p13",
+      "title": "Arcticle Armande Barthe",
+      "category": "graphic",
+      "description": "A REMPLIR",
+      "date": "March 2025",
+      "link": "",
+      "images": [
+        "images_test/Matthieu-ArmandeBarthe-G&G-01.jpg",
+        "images_test/Matthieu-ArmandeBarthe-G&G-02.jpg"
+      ]
+    },
+    {
+      "id": "p14",
+      "title": "Monogramme",
+      "category": "graphic",
+      "description": "A REMPLIR",
+      "date": "March 2025",
+      "link": "",
+      "images": [
+        "images_test/Planche_Monogramme-ML.jpg"
       ]
     }
   ]
