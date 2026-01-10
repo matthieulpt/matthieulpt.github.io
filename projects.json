@@ -105,19 +105,15 @@
     },
     {
       "id": "p9",
-      "title": "Affiche cour",
+      "title": "Typex",
       "category": "graphic",
-      "description": "Live photo coverage of artist Luidji's performance during an event for the Adidas brand on Music Day.",
-      "date": "October 2024",
+      "description": "Explore letters as graphic material and transform a surrealist sentence into an experimental composition. Discover three methods of intervention: manual, photocopier, scanner. Produce an edited record of your research and a final A3 poster using only manual collage. For this project, I started from the premise that the surrealist sentence was less a message than a material. Each workshop forced me to manipulate it differently: with my hands, with the machine, with the scanner. The goal was not to obtain a “correct” result, but to see how far the sentence could be distorted while retaining its presence. I multiplied the variations to observe how each technique produced a particular aesthetic: loss of contrast, glitch, superimposition, fragmentation, etc. The edition serves to organize this experimental chaos and show its stages. As for the poster, I constructed it as a synthesis: a version where the phrase remains perceptible, but integrated into an expressive graphic composition. The whole meets the requirements through its diversity, its format, and the presence of a strong final result.",
+      "date": "October 2025",
       "link": "",
       "images": [
-        "images_test/Shoot-Luidji-01.jpg",
-        "images_test/Shoot-Luidji-02.jpg",
-        "images_test/Shoot-Luidji-05.jpg",
-        "images_test/Shoot-Luidji-11.jpg",
-        "images_test/Shoot-Luidji-12.jpg",
-        "images_test/Shoot-Luidji-15.jpg",
-        "images_test/Shoot-Luidji-26.jpg"
+        "Affiche-Scan-01.jpg",
+        "Affiche-Scan-02.jpg",
+        "Affiche-Scan-03.jpg"
       ]
     }
   ]
