@@ -1,6 +1,21 @@
 {
   "projects": [
     {
+      "id": "p2",
+      "title": "Kam Hugh - Chez Mylène",
+      "category": "photo",
+      "description": "Photo capture of artist Kam Hugh's performance for the Chez Mylène bar during the Dragrace France final viewing party.",
+      "date": "July 2025",
+      "link": "https://www.instagram.com/p/DOBloUVjJlq/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
+      "images": [
+        "images_test/Shoot-Kam-01.jpg",
+        "images_test/Shoot-Kam-04.jpg",
+        "images_test/Shoot-Kam-06.jpg",
+        "images_test/Shoot-Kam-08.jpg",
+        "images_test/Shoot-Kam-12.jpg"
+      ]
+    },
+    {
       "id": "p1",
       "title": "Jeunesainte - World Music Day",
       "category": "photo",
@@ -15,21 +30,6 @@
         "images_test/Shoot-Jeunesaint-16.jpg",
         "images_test/Shoot-Jeunesaint-17.jpg",
         "images_test/Shoot-Jeunesaint-20.jpg"
-      ]
-    },
-    {
-      "id": "p2",
-      "title": "Kam Hugh - Chez Mylène",
-      "category": "photo",
-      "description": "Photo capture of artist Kam Hugh's performance for the Chez Mylène bar during the Dragrace France final viewing party.",
-      "date": "July 2025",
-      "link": "https://www.instagram.com/p/DOBloUVjJlq/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
-      "images": [
-        "images_test/Shoot-Kam-01.jpg",
-        "images_test/Shoot-Kam-04.jpg",
-        "images_test/Shoot-Kam-06.jpg",
-        "images_test/Shoot-Kam-08.jpg",
-        "images_test/Shoot-Kam-12.jpg"
       ]
     },
     {

@@ -334,6 +334,8 @@ function showProject(visibleIndex) {
   
     previews.forEach(preview => {
     if (preview === targetPreview) {
+      // Charger les images de la preview seulement quand elle devient visible
+      loadPreviewImages(preview);
       preview.classList.remove('opacity-0', 'pointer-events-none');
         preview.classList.add('opacity-100');
       activePreview = preview;
@@ -733,6 +735,7 @@ function generatePreviews() {
     const previewDiv = document.createElement('div');
     previewDiv.id = project.id;
     previewDiv.className = 'preview-content absolute inset-0 flex items-start justify-center overflow-y-auto p-8 opacity-0 pointer-events-none transition-opacity duration-200';
+    previewDiv.dataset.loaded = 'false';
     
     // Maximum 2 colonnes, le reste scrollable
     let gridClass = 'grid grid-cols-1 md:grid-cols-2 gap-8';
@@ -740,14 +743,42 @@ function generatePreviews() {
     const container = document.createElement('div');
     container.className = `w-full max-w-5xl ${gridClass}`;
     
+    // Créer des placeholders pour le lazy loading
     project.images.forEach((imagePath, index) => {
-      const mediaElement = createMediaElement(imagePath, `${project.title} - Image ${index + 1}`, 'w-full h-auto object-contain shadow-lg');
-      container.appendChild(mediaElement);
+      const placeholder = document.createElement('div');
+      placeholder.className = 'w-full aspect-video bg-neutral-200 animate-pulse';
+      placeholder.dataset.imagePath = imagePath;
+      placeholder.dataset.imageIndex = index;
+      placeholder.dataset.projectTitle = project.title;
+      container.appendChild(placeholder);
     });
     
     previewDiv.appendChild(container);
     mainContent.appendChild(previewDiv);
   });
+}
+
+// Charger les images d'une preview au moment où elle devient visible
+function loadPreviewImages(previewDiv) {
+  if (previewDiv.dataset.loaded === 'true') return;
+  
+  const container = previewDiv.querySelector('.grid');
+  if (!container) return;
+  
+  const placeholders = container.querySelectorAll('[data-image-path]');
+  
+  placeholders.forEach(placeholder => {
+    const imagePath = placeholder.dataset.imagePath;
+    const index = parseInt(placeholder.dataset.imageIndex);
+    const projectTitle = placeholder.dataset.projectTitle;
+    
+    const mediaElement = createMediaElement(imagePath, `${projectTitle} - Image ${index + 1}`, 'w-full h-auto object-contain shadow-lg');
+    
+    // Remplacer le placeholder par l'image réelle
+    placeholder.replaceWith(mediaElement);
+  });
+  
+  previewDiv.dataset.loaded = 'true';
 }
 
 function generateImageCarousel() {
@@ -801,7 +832,15 @@ function generateImageCarousel() {
     return;
   }
   
-  const shuffledImages = shuffleArray(imagesToShow);
+  // Limiter le nombre d'images dans le carrousel pour améliorer les performances
+  const MAX_CAROUSEL_IMAGES = 30;
+  let imagesToDisplay = imagesToShow;
+  if (imagesToShow.length > MAX_CAROUSEL_IMAGES) {
+    // Prendre un échantillon aléatoire si trop d'images
+    imagesToDisplay = shuffleArray(imagesToShow).slice(0, MAX_CAROUSEL_IMAGES);
+  } else {
+    imagesToDisplay = shuffleArray(imagesToShow);
+  }
   
   imageCarousel = document.createElement('div');
   imageCarousel.id = 'image-carousel';
@@ -852,7 +891,8 @@ function generateImageCarousel() {
     
     // Fonction pour vérifier si toutes les images ont été traitées (chargées ou échouées)
     function checkAllImagesProcessed() {
-      if (loadedImages + failedImages === shuffledImages.length) {
+      const totalImages = imagesToDisplay.length;
+      if (loadedImages + failedImages === totalImages) {
         // Nettoyer tous les timeouts
         if (loadTimeout) {
           clearTimeout(loadTimeout);
@@ -877,7 +917,7 @@ function generateImageCarousel() {
       placeImages();
     }, GLOBAL_TIMEOUT);
     
-    shuffledImages.forEach(({ path, project }) => {
+    imagesToDisplay.forEach(({ path, project }) => {
       const videoId = getYouTubeVideoId(path);
       
       // Si c'est une vidéo YouTube, utiliser des dimensions par défaut (16:9)
@@ -994,83 +1034,153 @@ function generateImageCarousel() {
         return;
       }
       
-      const totalArea = availableWidth * availableHeight;
-      let totalImageArea = 0;
-      imageData.forEach(img => {
-        totalImageArea += img.width * img.height;
-      });
-      
-      // Éviter la division par zéro
-      if (totalImageArea === 0) {
-        const loadingIndicator = document.getElementById('loading-indicator');
-        if (loadingIndicator) {
-          loadingIndicator.remove();
-        }
-        if (imageCarousel) {
-          imageCarousel.remove();
-          imageCarousel = null;
-        }
-        // Nettoyer le timeout de sécurité
-        clearTimeout(safetyTimeout);
-        return;
-      }
-      
-      const scaleFactor = Math.sqrt(totalArea * 0.75 / totalImageArea);
-      imageData.forEach(img => {
-        img.width *= scaleFactor;
-        img.height *= scaleFactor;
-      });
-      
-      // Créer des "noyaux" de nuage - points autour desquels les images se regroupent
-      const numClouds = Math.min(3 + Math.floor(imageData.length / 15), 6);
-      const clouds = [];
-      for (let i = 0; i < numClouds; i++) {
-        clouds.push({
-          centerX: (0.2 + Math.random() * 0.6) * availableWidth,
-          centerY: (0.2 + Math.random() * 0.6) * availableHeight,
-          radius: 150 + Math.random() * 200,
-          images: []
+      // Utiliser requestAnimationFrame pour ne pas bloquer le thread principal
+      requestAnimationFrame(() => {
+        const totalArea = availableWidth * availableHeight;
+        let totalImageArea = 0;
+        imageData.forEach(img => {
+          totalImageArea += img.width * img.height;
         });
-      }
-      
-      // Assigner chaque image à un nuage proche
-      imageData.forEach((imageItem, index) => {
-        // Trouver le nuage le plus proche ou créer un nouveau si trop loin
-        let closestCloud = clouds[0];
-        let minDist = Infinity;
         
-        clouds.forEach(cloud => {
-          const dist = Math.sqrt(
-            Math.pow(cloud.centerX - (availableWidth / 2), 2) +
-            Math.pow(cloud.centerY - (availableHeight / 2), 2)
-          );
-          if (dist < minDist) {
-            minDist = dist;
-            closestCloud = cloud;
+        // Éviter la division par zéro
+        if (totalImageArea === 0) {
+          const loadingIndicator = document.getElementById('loading-indicator');
+          if (loadingIndicator) {
+            loadingIndicator.remove();
           }
+          if (imageCarousel) {
+            imageCarousel.remove();
+            imageCarousel = null;
+          }
+          // Nettoyer le timeout de sécurité
+          clearTimeout(safetyTimeout);
+          return;
+        }
+        
+        const scaleFactor = Math.sqrt(totalArea * 0.75 / totalImageArea);
+        imageData.forEach(img => {
+          img.width *= scaleFactor;
+          img.height *= scaleFactor;
         });
         
-        closestCloud.images.push(imageItem);
-      });
-      
-      // Placer les images dans chaque nuage
-      const placedImages = [];
-      const minGap = 15;
-      
-      clouds.forEach((cloud, cloudIndex) => {
-        cloud.images.forEach((imageItem, imgIndex) => {
-          let attempts = 0;
-          let placed = false;
-          const maxAttempts = 100;
+        // Créer des "noyaux" de nuage - points autour desquels les images se regroupent
+        const numClouds = Math.min(3 + Math.floor(imageData.length / 15), 6);
+        const clouds = [];
+        for (let i = 0; i < numClouds; i++) {
+          clouds.push({
+            centerX: (0.2 + Math.random() * 0.6) * availableWidth,
+            centerY: (0.2 + Math.random() * 0.6) * availableHeight,
+            radius: 150 + Math.random() * 200,
+            images: []
+          });
+        }
+        
+        // Assigner chaque image à un nuage proche
+        imageData.forEach((imageItem, index) => {
+          // Trouver le nuage le plus proche ou créer un nouveau si trop loin
+          let closestCloud = clouds[0];
+          let minDist = Infinity;
           
-          // Varier la taille pour plus de naturel
+          clouds.forEach(cloud => {
+            const dist = Math.sqrt(
+              Math.pow(cloud.centerX - (availableWidth / 2), 2) +
+              Math.pow(cloud.centerY - (availableHeight / 2), 2)
+            );
+            if (dist < minDist) {
+              minDist = dist;
+              closestCloud = cloud;
+            }
+          });
+          
+          closestCloud.images.push(imageItem);
+        });
+        
+        // Placer les images dans chaque nuage
+        const placedImages = [];
+        const minGap = 15;
+        
+        clouds.forEach((cloud, cloudIndex) => {
+          cloud.images.forEach((imageItem, imgIndex) => {
+            let attempts = 0;
+            let placed = false;
+            const maxAttempts = 100;
+            
+            // Varier la taille pour plus de naturel
+            const sizeVariation = 0.75 + Math.random() * 0.5;
+            let width = imageItem.width * sizeVariation;
+            let height = imageItem.height * sizeVariation;
+            
+            // Limites de taille
+            const maxWidth = availableWidth * 0.35;
+            const maxHeight = availableHeight * 0.4;
+            if (width > maxWidth) {
+              width = maxWidth;
+              height = width / imageItem.aspectRatio;
+            }
+            if (height > maxHeight) {
+              height = maxHeight;
+              width = height * imageItem.aspectRatio;
+            }
+            
+            while (!placed && attempts < maxAttempts) {
+              // Position autour du centre du nuage avec distribution gaussienne
+              const angle = Math.random() * Math.PI * 2;
+              const distance = Math.random() * cloud.radius * (0.3 + Math.random() * 0.7);
+              const x = cloud.centerX + Math.cos(angle) * distance - width / 2;
+              const y = cloud.centerY + Math.sin(angle) * distance - height / 2;
+              
+              // Vérifier les limites
+              if (x < 0 || y < 0 || x + width > availableWidth || y + height > availableHeight) {
+                attempts++;
+                continue;
+              }
+              
+              // Vérifier les collisions
+              let collision = false;
+              for (const placedImg of placedImages) {
+                const distanceX = Math.abs(placedImg.x + placedImg.width/2 - (x + width/2));
+                const distanceY = Math.abs(placedImg.y + placedImg.height/2 - (y + height/2));
+                const minDistanceX = (placedImg.width + width) / 2 + minGap;
+                const minDistanceY = (placedImg.height + height) / 2 + minGap;
+                
+                if (distanceX < minDistanceX && distanceY < minDistanceY) {
+                  collision = true;
+                  break;
+                }
+              }
+              
+              if (!collision) {
+                // Rotation légère pour effet naturel
+                const rotation = (Math.random() - 0.5) * 12;
+                
+                placedImages.push({
+                  x,
+                  y,
+                  width,
+                  height,
+                  rotation,
+                  imageItem
+                });
+                placed = true;
+              }
+              
+              attempts++;
+            }
+          });
+        });
+        
+        // Si certaines images n'ont pas pu être placées, les placer aléatoirement
+        const unplacedImages = imageData.filter(img => 
+          !placedImages.some(placed => placed.imageItem === img)
+        );
+        
+        unplacedImages.forEach(imageItem => {
           const sizeVariation = 0.75 + Math.random() * 0.5;
           let width = imageItem.width * sizeVariation;
           let height = imageItem.height * sizeVariation;
           
-          // Limites de taille
-          const maxWidth = availableWidth * 0.35;
-          const maxHeight = availableHeight * 0.4;
+          const maxWidth = availableWidth * 0.3;
+          const maxHeight = availableHeight * 0.35;
           if (width > maxWidth) {
             width = maxWidth;
             height = width / imageItem.aspectRatio;
@@ -1080,82 +1190,14 @@ function generateImageCarousel() {
             width = height * imageItem.aspectRatio;
           }
           
-          while (!placed && attempts < maxAttempts) {
-            // Position autour du centre du nuage avec distribution gaussienne
-            const angle = Math.random() * Math.PI * 2;
-            const distance = Math.random() * cloud.radius * (0.3 + Math.random() * 0.7);
-            const x = cloud.centerX + Math.cos(angle) * distance - width / 2;
-            const y = cloud.centerY + Math.sin(angle) * distance - height / 2;
-            
-            // Vérifier les limites
-            if (x < 0 || y < 0 || x + width > availableWidth || y + height > availableHeight) {
-              attempts++;
-              continue;
-            }
-            
-            // Vérifier les collisions
-            let collision = false;
-            for (const placedImg of placedImages) {
-              const distanceX = Math.abs(placedImg.x + placedImg.width/2 - (x + width/2));
-              const distanceY = Math.abs(placedImg.y + placedImg.height/2 - (y + height/2));
-              const minDistanceX = (placedImg.width + width) / 2 + minGap;
-              const minDistanceY = (placedImg.height + height) / 2 + minGap;
-              
-              if (distanceX < minDistanceX && distanceY < minDistanceY) {
-                collision = true;
-                break;
-              }
-            }
-            
-            if (!collision) {
-              // Rotation légère pour effet naturel
-              const rotation = (Math.random() - 0.5) * 12;
-              
-              placedImages.push({
-                x,
-                y,
-                width,
-                height,
-                rotation,
-                imageItem
-              });
-              placed = true;
-            }
-            
-            attempts++;
-          }
+          const x = Math.random() * (availableWidth - width);
+          const y = Math.random() * (availableHeight - height);
+          const rotation = (Math.random() - 0.5) * 12;
+          
+          placedImages.push({ x, y, width, height, rotation, imageItem });
         });
-      });
-      
-      // Si certaines images n'ont pas pu être placées, les placer aléatoirement
-      const unplacedImages = imageData.filter(img => 
-        !placedImages.some(placed => placed.imageItem === img)
-      );
-      
-      unplacedImages.forEach(imageItem => {
-        const sizeVariation = 0.75 + Math.random() * 0.5;
-        let width = imageItem.width * sizeVariation;
-        let height = imageItem.height * sizeVariation;
         
-        const maxWidth = availableWidth * 0.3;
-        const maxHeight = availableHeight * 0.35;
-        if (width > maxWidth) {
-          width = maxWidth;
-          height = width / imageItem.aspectRatio;
-        }
-        if (height > maxHeight) {
-          height = maxHeight;
-          width = height * imageItem.aspectRatio;
-        }
-        
-        const x = Math.random() * (availableWidth - width);
-        const y = Math.random() * (availableHeight - height);
-        const rotation = (Math.random() - 0.5) * 12;
-        
-        placedImages.push({ x, y, width, height, rotation, imageItem });
-      });
-      
-      placedImages.forEach(({ x, y, width, height, rotation, imageItem }, index) => {
+        placedImages.forEach(({ x, y, width, height, rotation, imageItem }, index) => {
         const imgWrapper = document.createElement('div');
         imgWrapper.className = 'absolute cursor-pointer group image-carousel-item';
         imgWrapper.style.left = `${x}px`;
@@ -1251,30 +1293,33 @@ function generateImageCarousel() {
         imgWrapper.appendChild(mediaElement);
         container.appendChild(imgWrapper);
         
-        // Animation d'apparition avec délai progressif pour effet de cascade
-        setTimeout(() => {
-          imgWrapper.style.opacity = '1';
-          imgWrapper.style.transform = `rotate(${rotation}deg) scale(1)`;
-          imgWrapper.classList.add('animate-in');
-        }, index * 30); // 30ms de délai entre chaque image
+        // Animation d'apparition avec délai progressif pour effet de cascade (réduit pour améliorer les performances)
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            imgWrapper.style.opacity = '1';
+            imgWrapper.style.transform = `rotate(${rotation}deg) scale(1)`;
+            imgWrapper.classList.add('animate-in');
+          }, index * 20); // 20ms au lieu de 30ms pour charger plus rapidement
+        });
       });
       
-      imageCarousel.appendChild(container);
-      
-      // Masquer l'indicateur de chargement (s'assurer qu'il est bien masqué)
-      const loadingIndicator = document.getElementById('loading-indicator');
-      if (loadingIndicator) {
-        loadingIndicator.remove();
-      }
-      // Nettoyer le timeout de sécurité au cas où
-      clearTimeout(safetyTimeout);
-      
-      // Si un projet est sélectionné ou si on est en mode détail, masquer le carrousel
-      if (currentProjectIndex !== -1 || isDetailMode) {
-        fadeOut(imageCarousel);
-      } else {
-        fadeIn(imageCarousel);
-      }
+        imageCarousel.appendChild(container);
+        
+        // Masquer l'indicateur de chargement (s'assurer qu'il est bien masqué)
+        const loadingIndicator = document.getElementById('loading-indicator');
+        if (loadingIndicator) {
+          loadingIndicator.remove();
+        }
+        // Nettoyer le timeout de sécurité au cas où
+        clearTimeout(safetyTimeout);
+        
+        // Si un projet est sélectionné ou si on est en mode détail, masquer le carrousel
+        if (currentProjectIndex !== -1 || isDetailMode) {
+          fadeOut(imageCarousel);
+        } else {
+          fadeIn(imageCarousel);
+        }
+      }); // Fin du requestAnimationFrame
     }
   }, 0);
   

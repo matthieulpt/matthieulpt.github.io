@@ -454,12 +454,24 @@
         -moz-user-drag: none;
         -o-user-drag: none;
         pointer-events: auto;
+        /* Optimisation des performances */
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+        backface-visibility: hidden;
+        transform: translateZ(0);
       }
       img::selection {
         background: transparent;
       }
       img::-moz-selection {
         background: transparent;
+      }
+      /* Optimisation des animations CSS */
+      .image-carousel-item {
+        will-change: transform, opacity;
+      }
+      .image-carousel-item.animate-in {
+        will-change: auto;
       }
     </style>
     <script src="https://cdn.tailwindcss.com"></script>
