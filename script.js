@@ -705,7 +705,12 @@ function generateProjectList() {
   
   projectList.innerHTML = '';
   
-  projectsData.forEach(project => {
+  // Trier les projets par ordre alphabétique selon le titre
+  const sortedProjects = [...projectsData].sort((a, b) => {
+    return a.title.localeCompare(b.title, 'fr', { sensitivity: 'base' });
+  });
+  
+  sortedProjects.forEach(project => {
     const projectDiv = document.createElement('div');
     projectDiv.className = 'project text-3xl font-roc-thin tracking-tight cursor-pointer transition-transform duration-75 ease-out hover:translate-x-2 break-words';
     projectDiv.setAttribute('data-target', project.id);
