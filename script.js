@@ -513,7 +513,7 @@ function showAboutView() {
     }
     
     // Définir le titre et la description
-    aboutTitle.textContent = 'À propos';
+    aboutTitle.textContent = 'About me';
     aboutDescription.textContent = 'I’m Matthieu, a 19 years old graphic design student and professional photographer and videographer based in Paris. I am available for assignments in the Île-de-France region as well as anywhere else in France. I am currently looking for an internship in communications in Malta for the summer of 2026..';
     
     // Afficher la vue
@@ -812,14 +812,14 @@ function generateImageCarousel() {
   `;
   mainContent.appendChild(loadingIndicator);
   
-  // Obtenir les deux premières images de chaque projet selon le filtre
+  // Obtenir la première image de chaque projet selon le filtre
   let imagesToShow = [];
   projectsData.forEach(project => {
     if (!activeFilter || project.category === activeFilter) {
-      // Prendre seulement les deux premières images de chaque projet
-      project.images.slice(0, 2).forEach(imagePath => {
-        imagesToShow.push({ path: imagePath, project: project });
-      });
+      // Prendre seulement la première image de chaque projet
+      if (project.images && project.images.length > 0) {
+        imagesToShow.push({ path: project.images[0], project: project });
+      }
     }
   });
   
@@ -832,15 +832,8 @@ function generateImageCarousel() {
     return;
   }
   
-  // Limiter le nombre d'images dans le carrousel pour améliorer les performances
-  const MAX_CAROUSEL_IMAGES = 30;
-  let imagesToDisplay = imagesToShow;
-  if (imagesToShow.length > MAX_CAROUSEL_IMAGES) {
-    // Prendre un échantillon aléatoire si trop d'images
-    imagesToDisplay = shuffleArray(imagesToShow).slice(0, MAX_CAROUSEL_IMAGES);
-  } else {
-    imagesToDisplay = shuffleArray(imagesToShow);
-  }
+  // Mélanger les images pour l'affichage aléatoire
+  const imagesToDisplay = shuffleArray(imagesToShow);
   
   imageCarousel = document.createElement('div');
   imageCarousel.id = 'image-carousel';
